@@ -1,21 +1,9 @@
-const BABY_SUBREDDITS = [
-  'beyondthebump',
-  'NewParents',
-  'Parenting',
-  'BabyBumps',
-  'predaddit',
-  'daddit',
-].join('+')
-
 export async function searchReddit(productName, brand, limit = 6) {
   const query = `${brand} ${productName}`
-  const url = `https://www.reddit.com/r/${BABY_SUBREDDITS}/search.json?q=${encodeURIComponent(query)}&restrict_sr=on&sort=relevance&limit=${limit}&raw_json=1`
+  const url = `/api/reddit?q=${encodeURIComponent(query)}&limit=${limit}`
 
-  const res = await fetch(url, {
-    headers: { Accept: 'application/json' },
-  })
-
-  if (!res.ok) throw new Error(`Reddit API error: ${res.status}`)
+  const res = await fetch(url)
+  if (!res.ok) throw new Error(`Reddit proxy error: ${res.status}`)
 
   const json = await res.json()
   return json.data.children.map((c) => ({
