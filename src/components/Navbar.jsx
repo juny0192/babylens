@@ -1,0 +1,80 @@
+import { NavLink } from 'react-router-dom'
+import { useSaved } from '../context/SavedContext'
+
+const tabs = [
+  { to: '/', label: 'Home', icon: HomeIcon },
+  { to: '/discover', label: 'Discover', icon: DiscoverIcon },
+  { to: '/saved', label: 'Saved', icon: HeartIcon, badge: true },
+]
+
+export default function Navbar() {
+  const { saved } = useSaved()
+
+  return (
+    <>
+      {/* Top bar */}
+      <header className="fixed top-0 inset-x-0 z-40 bg-white border-b border-gray-100 h-14 flex items-center px-4">
+        <span className="text-xl font-bold text-brand-500 tracking-tight">
+          Baby<span className="text-gray-800">Lens</span>
+        </span>
+        <span className="ml-2 text-xs bg-brand-100 text-brand-600 px-2 py-0.5 rounded-full font-medium">beta</span>
+      </header>
+
+      {/* Bottom tab bar */}
+      <nav className="fixed bottom-0 inset-x-0 z-40 bg-white border-t border-gray-100 flex">
+        {tabs.map(({ to, label, icon: Icon, badge }) => (
+          <NavLink
+            key={to}
+            to={to}
+            end={to === '/'}
+            className={({ isActive }) =>
+              `flex-1 flex flex-col items-center justify-center py-2 text-xs font-medium transition-colors ${
+                isActive ? 'text-brand-500' : 'text-gray-400'
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <div className="relative mb-0.5">
+                  <Icon active={isActive} />
+                  {badge && saved.size > 0 && (
+                    <span className="absolute -top-1 -right-2 bg-brand-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
+                      {saved.size > 99 ? '99+' : saved.size}
+                    </span>
+                  )}
+                </div>
+                {label}
+              </>
+            )}
+          </NavLink>
+        ))}
+      </nav>
+    </>
+  )
+}
+
+function HomeIcon({ active }) {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill={active ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" />
+      <path d="M9 21V12h6v9" />
+    </svg>
+  )
+}
+
+function DiscoverIcon({ active }) {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill={active ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8" />
+      <path d="M21 21l-4.35-4.35" />
+    </svg>
+  )
+}
+
+function HeartIcon({ active }) {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill={active ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+    </svg>
+  )
+}
