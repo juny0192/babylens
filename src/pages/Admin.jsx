@@ -5,6 +5,8 @@ import { CATEGORIES, AGE_RANGES, PRICE_TIERS } from '../data/products'
 
 const ADMIN_PIN = import.meta.env.VITE_ADMIN_PIN || '1234'
 const SOURCES = ['Reddit', 'YouTube', 'BabyGearLab', 'The Bump', "Lucie's List", 'Consumer Reports']
+const BULK_CATEGORIES = ['All', 'Strollers', 'Monitors', 'Car Seats', 'Carriers', 'Feeding']
+const BULK_TIERS = ['All', 'Budget', 'Mid', 'Premium']
 
 const EMPTY_FORM = {
   name: '',
@@ -44,6 +46,17 @@ export default function Admin() {
 
   const [products, setProducts] = useState([])
   const [listLoading, setListLoading] = useState(true)
+
+  // --- Bulk Generate state ---
+  const [activeTab, setActiveTab] = useState('single') // 'single' | 'bulk'
+  const [bulkCategory, setBulkCategory] = useState('All')
+  const [bulkTier, setBulkTier] = useState('All')
+  const [bulkLoading, setBulkLoading] = useState(false)
+  const [bulkError, setBulkError] = useState(null)
+  const [bulkResults, setBulkResults] = useState([])
+  const [bulkSelected, setBulkSelected] = useState(new Set())
+  const [bulkImporting, setBulkImporting] = useState(false)
+  const [bulkImportStatus, setBulkImportStatus] = useState(null) // { success: n, fail: n }
 
   // --- PIN ---
   function handlePinChange(val) {
@@ -152,6 +165,80 @@ export default function Admin() {
     setSaveLoading(false)
   }
 
+  // --- Bulk Generate ---
+  async function handleBulkFind() {
+    setBulkLoading(true)
+    setBulkError(null)
+    setBulkResults([])
+    setBulkSelected(new Set())
+    setBulkImportStatus(null)
+    try {
+      const res = await fetch('/api/bulk-generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category: bulkCategory, priceTier: bulkTier }),
+      })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.error || `Error ${res.status}`)
+      }
+      const data = await res.json()
+      setBulkResults(data.products || [])
+      // Pre-select all
+      setBulkSelected(new Set(data.products.map((_, i) => i)))
+    } catch (err) {
+      setBulkError(err.message)
+    } finally {
+      setBulkLoading(false)
+    }
+  }
+
+  function toggleBulkSelect(index) {
+    setBulkSelected(prev => {
+      const next = new Set(prev)
+      if (next.has(index)) next.delete(index)
+      else next.add(index)
+      return next
+    })
+  }
+
+  async function handleBulkImport() {
+    if (bulkSelected.size === 0) return
+    setBulkImporting(true)
+    setBulkImportStatus(null)
+    const toImport = [...bulkSelected].map(i => bulkResults[i])
+    let success = 0, fail = 0
+    const base = Date.now()
+    for (let i = 0; i < toImport.length; i++) {
+      const p = toImport[i]
+      const row = {
+        id: base + i,
+        name: p.name,
+        brand: p.brand,
+        category: p.category,
+        price: Number(p.price),
+        price_tier: p.price_tier,
+        age_range: p.age_range,
+        mentions: Number(p.mentions),
+        sources: Object.fromEntries(
+          Object.entries(p.sources || {}).map(([k, v]) => [k, Number(v) || 0])
+        ),
+        verdict: p.verdict,
+        pros: p.pros,
+        cons: p.cons,
+        best_for: p.best_for,
+        recall: p.recall || false,
+        recall_details: p.recall_details || null,
+      }
+      const { error } = await supabase.from('products').upsert(row)
+      if (error) fail++
+      else success++
+    }
+    setBulkImportStatus({ success, fail })
+    setBulkImporting(false)
+    if (success > 0) loadProducts()
+  }
+
   // --- Delete ---
   async function handleDelete(id) {
     if (!window.confirm('Delete this product?')) return
@@ -205,6 +292,136 @@ export default function Admin() {
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-5 space-y-5">
+
+        {/* Tab bar */}
+        <div className="flex bg-white border border-gray-100 rounded-2xl p-1 shadow-sm">
+          {[['single', 'Add Product'], ['bulk', 'Bulk Generate']].map(([key, label]) => (
+            <button key={key} onClick={() => setActiveTab(key)}
+              className={`flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all ${
+                activeTab === key
+                  ? 'bg-brand-500 text-white shadow-sm'
+                  : 'text-gray-400 hover:text-gray-600'
+              }`}>{label}</button>
+          ))}
+        </div>
+
+        {/* Bulk Generate tab */}
+        {activeTab === 'bulk' && (
+          <>
+            <div className={cardClass}>
+              <h2 className="text-sm font-bold text-gray-800 mb-1">Find Products Automatically</h2>
+              <p className="text-xs text-gray-400 mb-4">AI will find 10 real baby products and fill in all the details for you.</p>
+
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <div>
+                  <label className={labelClass}>Category</label>
+                  <select className={inputClass} value={bulkCategory} onChange={e => setBulkCategory(e.target.value)}>
+                    {BULK_CATEGORIES.map(c => <option key={c} value={c}>{c === 'All' ? 'All Categories' : c}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>Price Tier</label>
+                  <select className={inputClass} value={bulkTier} onChange={e => setBulkTier(e.target.value)}>
+                    {BULK_TIERS.map(t => <option key={t} value={t}>{t === 'All' ? 'All Tiers' : t}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <button onClick={handleBulkFind} disabled={bulkLoading}
+                className="w-full bg-brand-500 text-white font-semibold text-sm py-3 rounded-xl disabled:opacity-40 flex items-center justify-center gap-2">
+                {bulkLoading ? (
+                  <>
+                    <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" opacity=".25"/><path d="M21 12a9 9 0 01-9-9"/>
+                    </svg>
+                    Searching for products...
+                  </>
+                ) : '🔍 Find Products'}
+              </button>
+              {bulkError && <p className="text-xs text-red-500 mt-2">{bulkError}</p>}
+            </div>
+
+            {bulkResults.length > 0 && (
+              <>
+                <div className="flex items-center justify-between px-1">
+                  <p className="text-sm font-bold text-gray-700">{bulkResults.length} products found</p>
+                  <div className="flex gap-3">
+                    <button onClick={() => setBulkSelected(new Set(bulkResults.map((_, i) => i)))}
+                      className="text-xs text-brand-500 font-semibold">Select all</button>
+                    <button onClick={() => setBulkSelected(new Set())}
+                      className="text-xs text-gray-400 font-semibold">Deselect all</button>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  {bulkResults.map((p, i) => (
+                    <div key={i}
+                      onClick={() => toggleBulkSelect(i)}
+                      className={`${cardClass} cursor-pointer transition-all ${
+                        bulkSelected.has(i) ? 'ring-2 ring-brand-400 border-brand-200' : 'opacity-60'
+                      }`}>
+                      <div className="flex items-start gap-3">
+                        <div className={`mt-0.5 w-5 h-5 rounded-md border-2 flex-shrink-0 flex items-center justify-center transition-colors ${
+                          bulkSelected.has(i) ? 'bg-brand-500 border-brand-500' : 'border-gray-200'
+                        }`}>
+                          {bulkSelected.has(i) && (
+                            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="2 6 5 9 10 3" />
+                            </svg>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap mb-1">
+                            <p className="text-sm font-bold text-gray-800">{p.brand} {p.name}</p>
+                            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${categoryColors[p.category] || 'bg-gray-100 text-gray-600'}`}>
+                              {p.category}
+                            </span>
+                            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${tierColors[p.price_tier] || ''}`}>
+                              {p.price_tier}
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-400 mb-2">${p.price} · {p.mentions} mentions</p>
+                          <p className="text-xs text-gray-600 leading-relaxed line-clamp-2">{p.verdict}</p>
+                          {p.pros?.length > 0 && (
+                            <div className="mt-2 flex flex-wrap gap-1">
+                              {p.pros.slice(0, 2).map((pro, j) => (
+                                <span key={j} className="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">{pro}</span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {bulkImportStatus && (
+                  <div className={`rounded-2xl p-4 text-center text-sm font-semibold ${
+                    bulkImportStatus.fail === 0
+                      ? 'bg-emerald-50 border border-emerald-100 text-emerald-700'
+                      : 'bg-amber-50 border border-amber-100 text-amber-700'
+                  }`}>
+                    {bulkImportStatus.fail === 0
+                      ? `✅ ${bulkImportStatus.success} products imported!`
+                      : `⚠️ ${bulkImportStatus.success} imported, ${bulkImportStatus.fail} failed (check RLS policies)`}
+                  </div>
+                )}
+
+                <button onClick={handleBulkImport}
+                  disabled={bulkImporting || bulkSelected.size === 0}
+                  className="w-full bg-brand-500 text-white font-bold text-sm py-4 rounded-2xl disabled:opacity-40 shadow-sm">
+                  {bulkImporting
+                    ? `Importing ${bulkSelected.size} products...`
+                    : `Import ${bulkSelected.size} Selected Product${bulkSelected.size !== 1 ? 's' : ''}`}
+                </button>
+              </>
+            )}
+          </>
+        )}
+
+        {/* Single product tab */}
+        {activeTab === 'single' && (
+        <>
 
         {/* Section 1 — Identity + AI */}
         <div className={cardClass}>
@@ -405,6 +622,8 @@ export default function Admin() {
           className="w-full bg-brand-500 text-white font-bold text-sm py-4 rounded-2xl disabled:opacity-40 shadow-sm">
           {saveLoading ? 'Saving...' : 'Save to Database'}
         </button>
+        </>
+        )}
 
         {/* Existing products */}
         <div className={cardClass}>
