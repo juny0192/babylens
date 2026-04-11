@@ -7,11 +7,10 @@ export const products = [
     price: 1099,
     priceTier: 'Premium',
     ageRange: ['0-3mo', '3-6mo', '6-12mo', '1-2yr', '2+yr'],
-    mentions: 1847,
+    mentions: 1460,
     sources: {
       Reddit: 412,
       YouTube: 298,
-      Amazon: 387,
       'BabyGearLab': 52,
       'The Bump': 312,
       "Lucie's List": 241,
@@ -44,11 +43,10 @@ export const products = [
     price: 449,
     priceTier: 'Mid',
     ageRange: ['3-6mo', '6-12mo', '1-2yr', '2+yr'],
-    mentions: 1203,
+    mentions: 861,
     sources: {
       Reddit: 287,
       YouTube: 198,
-      Amazon: 342,
       'BabyGearLab': 44,
       'The Bump': 198,
       "Lucie's List": 89,
@@ -79,11 +77,10 @@ export const products = [
     price: 299,
     priceTier: 'Premium',
     ageRange: ['0-3mo', '3-6mo', '6-12mo'],
-    mentions: 2104,
+    mentions: 1606,
     sources: {
       Reddit: 621,
       YouTube: 389,
-      Amazon: 498,
       'BabyGearLab': 38,
       'The Bump': 312,
       "Lucie's List": 156,
@@ -115,11 +112,10 @@ export const products = [
     price: 79,
     priceTier: 'Budget',
     ageRange: ['0-3mo', '3-6mo', '6-12mo', '1-2yr'],
-    mentions: 876,
+    mentions: 489,
     sources: {
       Reddit: 198,
       YouTube: 112,
-      Amazon: 387,
       'BabyGearLab': 18,
       'The Bump': 98,
       "Lucie's List": 43,
@@ -151,11 +147,10 @@ export const products = [
     price: 329,
     priceTier: 'Mid',
     ageRange: ['0-3mo', '3-6mo', '6-12mo'],
-    mentions: 1567,
+    mentions: 1155,
     sources: {
       Reddit: 389,
       YouTube: 267,
-      Amazon: 412,
       'BabyGearLab': 67,
       'The Bump': 289,
       "Lucie's List": 98,
@@ -191,11 +186,10 @@ export const products = [
     price: 185,
     priceTier: 'Mid',
     ageRange: ['0-3mo', '3-6mo', '6-12mo', '1-2yr'],
-    mentions: 1124,
+    mentions: 812,
     sources: {
       Reddit: 287,
       YouTube: 198,
-      Amazon: 312,
       'BabyGearLab': 28,
       'The Bump': 178,
       "Lucie's List": 87,
@@ -227,11 +221,10 @@ export const products = [
     price: 130,
     priceTier: 'Mid',
     ageRange: ['0-3mo', '3-6mo', '6-12mo', '1-2yr', '2+yr'],
-    mentions: 743,
+    mentions: 476,
     sources: {
       Reddit: 178,
       YouTube: 121,
-      Amazon: 267,
       'BabyGearLab': 22,
       'The Bump': 98,
       "Lucie's List": 42,
@@ -262,11 +255,10 @@ export const products = [
     price: 13,
     priceTier: 'Budget',
     ageRange: ['0-3mo', '3-6mo'],
-    mentions: 2312,
+    mentions: 1436,
     sources: {
       Reddit: 712,
       YouTube: 287,
-      Amazon: 876,
       'BabyGearLab': 12,
       'The Bump': 287,
       "Lucie's List": 98,
@@ -293,7 +285,7 @@ export const products = [
 ]
 
 export const CATEGORIES = ['Strollers', 'Monitors', 'Car Seats', 'Carriers', 'Feeding']
-export const SOURCES = ['Reddit', 'YouTube', 'Amazon', 'BabyGearLab', 'The Bump', "Lucie's List", 'Consumer Reports']
+export const SOURCES = ['Reddit', 'YouTube', 'BabyGearLab', 'The Bump', "Lucie's List", 'Consumer Reports']
 export const AGE_RANGES = ['0-3mo', '3-6mo', '6-12mo', '1-2yr', '2+yr']
 export const PRICE_TIERS = ['Budget', 'Mid', 'Premium']
 
