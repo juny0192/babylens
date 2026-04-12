@@ -130,23 +130,21 @@ export default function FilterPanel({ filters, onChange }) {
           </div>
 
           {/* Recall toggle */}
-          <div className="flex items-center justify-between bg-red-50 rounded-xl px-3 py-2.5">
+          <div
+            onClick={() => onChange({ ...filters, recallOnly: !filters.recallOnly })}
+            className="flex items-center justify-between bg-red-50 rounded-xl px-3 py-2.5 cursor-pointer select-none"
+          >
             <div>
               <p className="text-sm font-semibold text-red-700">Show recalled products only</p>
               <p className="text-xs text-red-400">Filter to items with recall history</p>
             </div>
-            <button
-              onClick={() => onChange({ ...filters, recallOnly: !filters.recallOnly })}
-              className={`relative w-10 h-6 rounded-full transition-colors ${
-                filters.recallOnly ? 'bg-red-500' : 'bg-gray-200'
-              }`}
-            >
-              <span
-                className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${
-                  filters.recallOnly ? 'translate-x-5' : 'translate-x-1'
-                }`}
-              />
-            </button>
+            <div className={`relative w-10 h-6 rounded-full transition-colors flex-shrink-0 ${
+              filters.recallOnly ? 'bg-red-500' : 'bg-gray-200'
+            }`}>
+              <span className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${
+                filters.recallOnly ? 'translate-x-5' : 'translate-x-1'
+              }`} />
+            </div>
           </div>
         </div>
       )}

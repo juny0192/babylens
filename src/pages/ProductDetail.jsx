@@ -2,8 +2,6 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useProduct } from '../hooks/useProduct'
 import { useSaved } from '../context/SavedContext'
 import SourceBreakdown from '../components/SourceBreakdown'
-import ReviewForm from '../components/ReviewForm'
-import ReviewList from '../components/ReviewList'
 import LiveMentions from '../components/LiveMentions'
 
 const tierColors = {
@@ -179,10 +177,6 @@ export default function ProductDetail() {
 
         {/* Live Mentions */}
         <LiveMentions product={product} />
-
-        {/* Reviews */}
-        <ReviewForm productId={product.id} />
-        <ReviewList productId={product.id} />
       </div>
     </div>
   )
