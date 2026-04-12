@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useProduct } from '../hooks/useProduct'
 import { useSaved } from '../context/SavedContext'
+import { useAuth } from '../context/AuthContext'
 import SourceBreakdown from '../components/SourceBreakdown'
 import LiveMentions from '../components/LiveMentions'
 
@@ -13,6 +14,7 @@ const tierColors = {
 export default function ProductDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { user } = useAuth()
   const { isSaved, toggleSaved } = useSaved()
   const { product, loading, error } = useProduct(Number(id))
 
@@ -53,16 +55,23 @@ export default function ProductDetail() {
           </svg>
           Back
         </button>
-        <button
-          onClick={() => toggleSaved(product.id)}
-          className="flex items-center gap-1.5 text-sm font-medium"
-          style={{ color: saved ? '#ed5e58' : '#9ca3af' }}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill={saved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-          </svg>
-          {saved ? 'Saved' : 'Save'}
-        </button>
+        {user ? (
+          <button
+            onClick={() => toggleSaved(product.id)}
+            className="flex items-center gap-1.5 text-sm font-medium"
+            style={{ color: saved ? '#ed5e58' : '#9ca3af' }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill={saved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+            </svg>
+            {saved ? 'Saved' : 'Save'}
+          </button>
+        ) : (
+          <button onClick={() => navigate('/auth')}
+            className="text-sm font-medium text-gray-400">
+            Log in to save
+          </button>
+        )}
       </div>
 
       <div className="px-4 pt-5 space-y-5">

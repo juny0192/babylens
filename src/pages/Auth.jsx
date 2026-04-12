@@ -1,0 +1,123 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
+
+export default function Auth() {
+  const navigate = useNavigate()
+  const { signIn, signUp } = useAuth()
+
+  const [tab, setTab] = useState('login') // 'login' | 'signup'
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [success, setSuccess] = useState(null)
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+    setSuccess(null)
+
+    if (tab === 'login') {
+      const { error } = await signIn(email, password)
+      if (error) {
+        setError(error.message)
+      } else {
+        navigate('/')
+      }
+    } else {
+      const { error } = await signUp(email, password)
+      if (error) {
+        setError(error.message)
+      } else {
+        setSuccess('Check your email for a verification link. Once verified, you can log in.')
+        setEmail('')
+        setPassword('')
+      }
+    }
+
+    setLoading(false)
+  }
+
+  const inputClass = 'w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-transparent bg-white'
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-5">
+      <div className="w-full max-w-sm">
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold">
+            <span className="text-brand-500">Baby</span>
+            <span className="text-gray-800">Lens</span>
+          </h1>
+          <p className="text-sm text-gray-400 mt-1">The trusted baby product guide</p>
+        </div>
+
+        {/* Card */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          {/* Tabs */}
+          <div className="flex border-b border-gray-100">
+            {[['login', 'Log In'], ['signup', 'Sign Up']].map(([key, label]) => (
+              <button key={key} onClick={() => { setTab(key); setError(null); setSuccess(null) }}
+                className={`flex-1 py-3.5 text-sm font-semibold transition-colors ${
+                  tab === key ? 'text-brand-500 border-b-2 border-brand-500' : 'text-gray-400'
+                }`}>
+                {label}
+              </button>
+            ))}
+          </div>
+
+          <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <div>
+              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5 block">Email</label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className={inputClass}
+              />
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5 block">Password</label>
+              <input
+                type="password"
+                required
+                minLength={6}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className={inputClass}
+              />
+              {tab === 'signup' && (
+                <p className="text-[11px] text-gray-400 mt-1">Minimum 6 characters</p>
+              )}
+            </div>
+
+            {error && (
+              <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 text-xs text-red-600">
+                {error}
+              </div>
+            )}
+            {success && (
+              <div className="bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3 text-xs text-emerald-700">
+                {success}
+              </div>
+            )}
+
+            <button type="submit" disabled={loading}
+              className="w-full bg-brand-500 text-white font-bold text-sm py-3.5 rounded-xl disabled:opacity-40">
+              {loading ? (tab === 'login' ? 'Logging in...' : 'Creating account...') : (tab === 'login' ? 'Log In' : 'Create Account')}
+            </button>
+          </form>
+        </div>
+
+        <button onClick={() => navigate('/')} className="w-full text-center text-sm text-gray-400 mt-5">
+          Continue without account
+        </button>
+      </div>
+    </div>
+  )
+}
