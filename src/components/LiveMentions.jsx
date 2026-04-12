@@ -107,8 +107,16 @@ function TabButton({ active, onClick, children }) {
   )
 }
 
+const YOUTUBE_SORTS = [
+  { key: 'newest', label: 'Newest', order: 'date', publishedAfter: null },
+  { key: 'most_viewed', label: 'Most Viewed', order: 'viewCount', publishedAfter: null },
+  { key: '1month', label: '1 Month', order: 'viewCount', publishedAfter: () => new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString() },
+  { key: '6months', label: '6 Months', order: 'viewCount', publishedAfter: () => new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString() },
+]
+
 export default function LiveMentions({ product }) {
   const [tab, setTab] = useState('reddit')
+  const [youtubeSort, setYoutubeSort] = useState('newest')
   const [redditPosts, setRedditPosts] = useState([])
   const [youtubePosts, setYoutubePosts] = useState([])
   const [redditLoading, setRedditLoading] = useState(true)
@@ -117,18 +125,22 @@ export default function LiveMentions({ product }) {
   const [youtubeError, setYoutubeError] = useState(null)
 
   useEffect(() => {
-    // Fetch Reddit
     searchReddit(product.name, product.brand)
       .then(setRedditPosts)
       .catch((e) => setRedditError(e.message))
       .finally(() => setRedditLoading(false))
+  }, [product.id])
 
-    // Fetch YouTube
-    searchYouTube(product.name, product.brand)
+  useEffect(() => {
+    setYoutubeLoading(true)
+    setYoutubeError(null)
+    const sort = YOUTUBE_SORTS.find(s => s.key === youtubeSort)
+    const publishedAfter = typeof sort.publishedAfter === 'function' ? sort.publishedAfter() : sort.publishedAfter
+    searchYouTube(product.name, product.brand, { order: sort.order, publishedAfter })
       .then(setYoutubePosts)
       .catch((e) => setYoutubeError(e.message))
       .finally(() => setYoutubeLoading(false))
-  }, [product.id])
+  }, [product.id, youtubeSort])
 
   const isLoading = tab === 'reddit' ? redditLoading : youtubeLoading
   const error = tab === 'reddit' ? redditError : youtubeError
@@ -156,6 +168,20 @@ export default function LiveMentions({ product }) {
             )}
           </TabButton>
         </div>
+        {tab === 'youtube' && (
+          <div className="flex gap-1.5 pt-3 pb-1 overflow-x-auto scrollbar-hide">
+            {YOUTUBE_SORTS.map(s => (
+              <button key={s.key} onClick={() => setYoutubeSort(s.key)}
+                className={`flex-shrink-0 px-3 py-1 rounded-full text-[11px] font-semibold border transition-all ${
+                  youtubeSort === s.key
+                    ? 'bg-brand-500 border-brand-500 text-white'
+                    : 'bg-white border-gray-200 text-gray-500'
+                }`}>
+                {s.key === '1month' || s.key === '6months' ? `Top ${s.label}` : s.label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Content */}
