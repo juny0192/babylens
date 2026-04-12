@@ -28,7 +28,7 @@ export function useProducts(filters, query) {
         q = q.lte('price', filters.maxPrice)
       }
       if (filters.recallOnly) {
-        q = q.eq('recall', true)
+        q = q.eq('recall', false)
       }
 
       const { data, error: err } = await q
