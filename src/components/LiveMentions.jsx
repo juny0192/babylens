@@ -110,8 +110,7 @@ function TabButton({ active, onClick, children }) {
 const YOUTUBE_SORTS = [
   { key: 'newest', label: 'Newest', order: 'date', publishedAfter: null },
   { key: 'most_viewed', label: 'Most Viewed', order: 'viewCount', publishedAfter: null },
-  { key: '1month', label: '1 Month', order: 'viewCount', publishedAfter: () => new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString() },
-  { key: '6months', label: '6 Months', order: 'viewCount', publishedAfter: () => new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString() },
+  { key: '6months', label: 'Most Viewed in 6M', order: 'viewCount', publishedAfter: () => new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString() },
 ]
 
 export default function LiveMentions({ product }) {
@@ -177,7 +176,7 @@ export default function LiveMentions({ product }) {
                     ? 'bg-brand-500 border-brand-500 text-white'
                     : 'bg-white border-gray-200 text-gray-500'
                 }`}>
-                {s.key === '1month' || s.key === '6months' ? `Top ${s.label}` : s.label}
+                {s.label}
               </button>
             ))}
           </div>
