@@ -13,7 +13,7 @@ export default async function handler(req, res) {
 
   const { category, priceTier } = req.body || {}
 
-  const categoryFilter = category && category !== 'All' ? `in the "${category}" category` : 'across any baby product category (Strollers, Monitors, Car Seats, Carriers, Feeding)'
+  const categoryFilter = category && category !== 'All' ? `in the "${category}" category` : 'across any baby product category (Strollers, Car Seats, Carriers, Feeding, Monitors, Nursery & Sleep, Gear & Travel, Toys & Play, Bath & Potty, Health & Safety)'
   const tierFilter = priceTier && priceTier !== 'All' ? `All products must be ${priceTier} tier.` : 'Mix of Budget, Mid, and Premium tiers.'
 
   const userPrompt = `Generate a list of 10 real, well-known baby products ${categoryFilter}.
@@ -24,7 +24,7 @@ Return a JSON array of 10 objects. Each object must have exactly these fields:
 {
   "name": product model name (string),
   "brand": brand name (string),
-  "category": one of ["Strollers","Monitors","Car Seats","Carriers","Feeding"],
+  "category": one of ["Strollers","Car Seats","Carriers","Feeding","Monitors","Nursery & Sleep","Gear & Travel","Toys & Play","Bath & Potty","Health & Safety"],
   "price": integer in USD (realistic retail price),
   "price_tier": one of ["Budget","Mid","Premium"],
   "age_range": array of one or more ["0-3mo","3-6mo","6-12mo","1-2yr","2+yr"],

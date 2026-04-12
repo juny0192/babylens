@@ -5,7 +5,7 @@ import { CATEGORIES, AGE_RANGES, PRICE_TIERS } from '../data/products'
 
 const ADMIN_PIN = import.meta.env.VITE_ADMIN_PIN || '1234'
 const SOURCES = ['Reddit', 'YouTube', 'BabyGearLab', 'The Bump', "Lucie's List", 'Consumer Reports']
-const BULK_CATEGORIES = ['All', 'Strollers', 'Monitors', 'Car Seats', 'Carriers', 'Feeding']
+const BULK_CATEGORIES = ['All', 'Strollers', 'Car Seats', 'Carriers', 'Feeding', 'Monitors', 'Nursery & Sleep', 'Gear & Travel', 'Toys & Play', 'Bath & Potty', 'Health & Safety']
 const BULK_TIERS = ['All', 'Budget', 'Mid', 'Premium']
 
 const EMPTY_FORM = {
@@ -26,7 +26,7 @@ const EMPTY_FORM = {
 }
 
 const tierColors = { Budget: 'bg-emerald-100 text-emerald-700 border-emerald-200', Mid: 'bg-blue-100 text-blue-700 border-blue-200', Premium: 'bg-purple-100 text-purple-700 border-purple-200' }
-const categoryColors = { Strollers: 'bg-orange-100 text-orange-700', Monitors: 'bg-sky-100 text-sky-700', 'Car Seats': 'bg-red-100 text-red-700', Carriers: 'bg-teal-100 text-teal-700', Feeding: 'bg-pink-100 text-pink-700' }
+const categoryColors = { Strollers: 'bg-orange-100 text-orange-700', 'Car Seats': 'bg-red-100 text-red-700', Carriers: 'bg-teal-100 text-teal-700', Feeding: 'bg-pink-100 text-pink-700', Monitors: 'bg-sky-100 text-sky-700', 'Nursery & Sleep': 'bg-indigo-100 text-indigo-700', 'Gear & Travel': 'bg-amber-100 text-amber-700', 'Toys & Play': 'bg-yellow-100 text-yellow-700', 'Bath & Potty': 'bg-cyan-100 text-cyan-700', 'Health & Safety': 'bg-green-100 text-green-700' }
 
 const inputClass = 'w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-transparent bg-white'
 const labelClass = 'text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5 block'

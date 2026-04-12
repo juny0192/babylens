@@ -6,18 +6,28 @@ import ProductCard from '../components/ProductCard'
 
 const categoryDescriptions = {
   Strollers: 'Full-size, lightweight & travel',
-  Monitors: 'Video, audio & wearable',
   'Car Seats': 'Infant, convertible & booster',
   Carriers: 'Soft-structured & wraps',
   Feeding: 'Bottles, pumps & nursing',
+  Monitors: 'Video, audio & wearable',
+  'Nursery & Sleep': 'Cribs, bedding & swaddles',
+  'Gear & Travel': 'Bags, bouncers & on-the-go',
+  'Toys & Play': 'Infant, toddler & learning',
+  'Bath & Potty': 'Tubs, care & potty training',
+  'Health & Safety': 'Thermometers, gates & more',
 }
 
 const categoryGradients = {
   Strollers: 'from-orange-400 to-amber-300',
-  Monitors: 'from-sky-400 to-blue-300',
   'Car Seats': 'from-red-400 to-rose-300',
   Carriers: 'from-teal-400 to-emerald-300',
   Feeding: 'from-pink-400 to-fuchsia-300',
+  Monitors: 'from-sky-400 to-blue-300',
+  'Nursery & Sleep': 'from-indigo-400 to-violet-300',
+  'Gear & Travel': 'from-amber-400 to-yellow-300',
+  'Toys & Play': 'from-yellow-400 to-lime-300',
+  'Bath & Potty': 'from-cyan-400 to-teal-300',
+  'Health & Safety': 'from-green-400 to-emerald-300',
 }
 
 export default function Discover() {

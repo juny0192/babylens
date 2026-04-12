@@ -9,10 +9,15 @@ const tierColors = {
 
 const categoryColors = {
   Strollers: 'bg-orange-100 text-orange-700',
-  Monitors: 'bg-sky-100 text-sky-700',
   'Car Seats': 'bg-red-100 text-red-700',
   Carriers: 'bg-teal-100 text-teal-700',
   Feeding: 'bg-pink-100 text-pink-700',
+  Monitors: 'bg-sky-100 text-sky-700',
+  'Nursery & Sleep': 'bg-indigo-100 text-indigo-700',
+  'Gear & Travel': 'bg-amber-100 text-amber-700',
+  'Toys & Play': 'bg-yellow-100 text-yellow-700',
+  'Bath & Potty': 'bg-cyan-100 text-cyan-700',
+  'Health & Safety': 'bg-green-100 text-green-700',
 }
 
 export default function ProductCard({ product, rank }) {

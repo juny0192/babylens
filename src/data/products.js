@@ -284,15 +284,31 @@ export const products = [
   },
 ]
 
-export const CATEGORIES = ['Strollers', 'Monitors', 'Car Seats', 'Carriers', 'Feeding']
+export const CATEGORIES = [
+  'Strollers',
+  'Car Seats',
+  'Carriers',
+  'Feeding',
+  'Monitors',
+  'Nursery & Sleep',
+  'Gear & Travel',
+  'Toys & Play',
+  'Bath & Potty',
+  'Health & Safety',
+]
 export const SOURCES = ['Reddit', 'YouTube', 'BabyGearLab', 'The Bump', "Lucie's List", 'Consumer Reports']
 export const AGE_RANGES = ['0-3mo', '3-6mo', '6-12mo', '1-2yr', '2+yr']
 export const PRICE_TIERS = ['Budget', 'Mid', 'Premium']
 
 export const CATEGORY_ICONS = {
   Strollers: '🛒',
-  Monitors: '📡',
   'Car Seats': '🚗',
   Carriers: '🎽',
   Feeding: '🍼',
+  Monitors: '📡',
+  'Nursery & Sleep': '🛏️',
+  'Gear & Travel': '🧳',
+  'Toys & Play': '🧸',
+  'Bath & Potty': '🛁',
+  'Health & Safety': '🩺',
 }
