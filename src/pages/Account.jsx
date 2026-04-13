@@ -99,12 +99,16 @@ export default function Account() {
                 {user.email?.[0]?.toUpperCase()}
               </span>
             </div>
-            <div>
-              <p className="text-sm font-bold text-gray-800">{user.email}</p>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-gray-800 truncate">{user.email}</p>
               <p className="text-xs text-gray-400 mt-0.5">
                 Member since {new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
               </p>
             </div>
+            <button onClick={() => { setShowDeleteModal(true); setDeleteConfirm('') }}
+              className="flex-shrink-0 text-xs font-semibold text-red-400 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors">
+              Delete
+            </button>
           </div>
         </div>
 
