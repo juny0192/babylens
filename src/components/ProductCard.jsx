@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useSaved } from '../context/SavedContext'
+import { useAuth } from '../context/AuthContext'
 
 const tierColors = {
   Budget: 'bg-emerald-100 text-emerald-700',
@@ -22,6 +23,7 @@ const categoryColors = {
 
 export default function ProductCard({ product, rank }) {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const { isSaved, toggleSaved } = useSaved()
   const saved = isSaved(product.id)
 
@@ -47,28 +49,30 @@ export default function ProductCard({ product, rank }) {
             <h3 className="text-sm font-semibold text-gray-900 leading-snug">{product.name}</h3>
           </div>
 
-          {/* Save button */}
-          <button
-            className="flex-shrink-0 p-1.5 -mr-1 -mt-1 rounded-full hover:bg-gray-50 transition-colors"
-            onClick={(e) => {
-              e.stopPropagation()
-              toggleSaved(product.id)
-            }}
-            aria-label={saved ? 'Remove from saved' : 'Save product'}
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill={saved ? '#ed5e58' : 'none'}
-              stroke={saved ? '#ed5e58' : '#9ca3af'}
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+          {/* Save button — only when logged in */}
+          {user && (
+            <button
+              className="flex-shrink-0 p-1.5 -mr-1 -mt-1 rounded-full hover:bg-gray-50 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation()
+                toggleSaved(product.id)
+              }}
+              aria-label={saved ? 'Remove from saved' : 'Save product'}
             >
-              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-            </svg>
-          </button>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill={saved ? '#ed5e58' : 'none'}
+                stroke={saved ? '#ed5e58' : '#9ca3af'}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+              </svg>
+            </button>
+          )}
         </div>
 
         {/* Badges row */}
