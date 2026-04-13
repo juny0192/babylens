@@ -107,7 +107,7 @@ export default function Account() {
             </div>
             <button onClick={() => { setShowDeleteModal(true); setDeleteConfirm('') }}
               className="flex-shrink-0 text-xs font-semibold text-red-400 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors">
-              Delete
+              Delete Account
             </button>
           </div>
         </div>
@@ -173,19 +173,7 @@ export default function Account() {
           </form>
         </div>
 
-        {/* Delete Account */}
-        <div className={cardClass}>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-semibold text-gray-800">Delete Account</p>
-              <p className="text-xs text-gray-400 mt-0.5">Permanently remove your account</p>
-            </div>
-            <button onClick={() => { setShowDeleteModal(true); setDeleteConfirm('') }}
-              className="text-xs font-semibold text-red-500 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors">
-              Delete
-            </button>
-          </div>
-        </div>
+
 
         {/* Delete confirmation modal */}
         {showDeleteModal && (
