@@ -111,10 +111,16 @@ export default function Account() {
                 Member since {new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
               </p>
             </div>
-            <button onClick={() => { setShowDeleteModal(true); setDeleteConfirm('') }}
-              className="flex-shrink-0 text-xs font-semibold text-red-400 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors">
-              Delete Account
-            </button>
+            <div className="flex flex-col gap-1.5 flex-shrink-0">
+              <button onClick={() => { setShowDeleteModal(true); setDeleteConfirm('') }}
+                className="text-xs font-semibold text-red-400 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors">
+                Delete Account
+              </button>
+              <button onClick={() => { setShowPwModal(true); setPwNew(''); setPwConfirm(''); setPwStatus(null) }}
+                className="text-xs font-semibold text-brand-500 border border-brand-200 px-3 py-1.5 rounded-lg hover:bg-brand-50 transition-colors">
+                Change Password
+              </button>
+            </div>
           </div>
         </div>
 
@@ -147,20 +153,6 @@ export default function Account() {
               ))}
             </div>
           )}
-        </div>
-
-        {/* Change Password button */}
-        <div className={cardClass}>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-semibold text-gray-800">Password</p>
-              <p className="text-xs text-gray-400 mt-0.5">Update your login password</p>
-            </div>
-            <button onClick={() => { setShowPwModal(true); setPwNew(''); setPwConfirm(''); setPwStatus(null) }}
-              className="text-xs font-semibold text-brand-500 border border-brand-200 px-3 py-1.5 rounded-lg hover:bg-brand-50 transition-colors">
-              Change Password
-            </button>
-          </div>
         </div>
 
         {/* Change Password modal */}
