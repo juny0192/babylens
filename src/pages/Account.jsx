@@ -20,6 +20,7 @@ export default function Account() {
 
   const [deleteConfirm, setDeleteConfirm] = useState('')
   const [deleteLoading, setDeleteLoading] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
 
   useEffect(() => {
     if (!user) return
@@ -169,18 +170,43 @@ export default function Account() {
         </div>
 
         {/* Delete Account */}
-        <div className="bg-white rounded-2xl border border-red-100 shadow-sm p-5">
-          <h2 className="text-sm font-bold text-red-600 mb-1">Delete Account</h2>
-          <p className="text-xs text-gray-400 mb-4">This will permanently delete your account and all saved data. Type DELETE to confirm.</p>
-          <input type="text" className={`${inputClass} border-red-200 mb-3`} placeholder="Type DELETE to confirm"
-            value={deleteConfirm} onChange={e => setDeleteConfirm(e.target.value)} />
-          <button
-            onClick={handleDeleteAccount}
-            disabled={deleteConfirm !== 'DELETE' || deleteLoading}
-            className="w-full bg-red-500 text-white font-semibold text-sm py-3 rounded-xl disabled:opacity-40">
-            {deleteLoading ? 'Deleting...' : 'Delete My Account'}
-          </button>
+        <div className={cardClass}>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-semibold text-gray-800">Delete Account</p>
+              <p className="text-xs text-gray-400 mt-0.5">Permanently remove your account</p>
+            </div>
+            <button onClick={() => { setShowDeleteModal(true); setDeleteConfirm('') }}
+              className="text-xs font-semibold text-red-500 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors">
+              Delete
+            </button>
+          </div>
         </div>
+
+        {/* Delete confirmation modal */}
+        {showDeleteModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-5"
+            onClick={e => { if (e.target === e.currentTarget) setShowDeleteModal(false) }}>
+            <div className="absolute inset-0 bg-black/40" />
+            <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+              <h3 className="text-base font-bold text-gray-900 mb-1">Delete Account</h3>
+              <p className="text-sm text-gray-500 mb-4">This will permanently delete your account and all saved data. Type <span className="font-bold text-red-500">DELETE</span> to confirm.</p>
+              <input type="text" className={`${inputClass} border-red-200 mb-4`} placeholder="Type DELETE to confirm"
+                value={deleteConfirm} onChange={e => setDeleteConfirm(e.target.value)} autoFocus />
+              <div className="flex gap-3">
+                <button onClick={() => setShowDeleteModal(false)}
+                  className="flex-1 border border-gray-200 text-gray-600 font-semibold text-sm py-3 rounded-xl">
+                  Cancel
+                </button>
+                <button onClick={handleDeleteAccount}
+                  disabled={deleteConfirm !== 'DELETE' || deleteLoading}
+                  className="flex-1 bg-red-500 text-white font-semibold text-sm py-3 rounded-xl disabled:opacity-40">
+                  {deleteLoading ? 'Deleting...' : 'Delete'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
