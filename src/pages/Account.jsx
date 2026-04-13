@@ -12,7 +12,7 @@ export default function Account() {
   const [savedProducts, setSavedProducts] = useState([])
   const [savedLoading, setSavedLoading] = useState(true)
 
-  const [pwCurrent, setPwCurrent] = useState('')
+  const [showPwModal, setShowPwModal] = useState(false)
   const [pwNew, setPwNew] = useState('')
   const [pwConfirm, setPwConfirm] = useState('')
   const [pwLoading, setPwLoading] = useState(false)
@@ -56,8 +56,14 @@ export default function Account() {
     setPwLoading(true)
     setPwStatus(null)
     const { error } = await updatePassword(pwNew)
-    setPwStatus(error ? error.message : 'success')
-    if (!error) { setPwCurrent(''); setPwNew(''); setPwConfirm('') }
+    if (error) {
+      setPwStatus(error.message)
+    } else {
+      setPwStatus('success')
+      setPwNew('')
+      setPwConfirm('')
+      setTimeout(() => { setShowPwModal(false); setPwStatus(null) }, 1500)
+    }
     setPwLoading(false)
   }
 
@@ -143,35 +149,61 @@ export default function Account() {
           )}
         </div>
 
-        {/* Change Password */}
+        {/* Change Password button */}
         <div className={cardClass}>
-          <h2 className="text-sm font-bold text-gray-800 mb-4">Change Password</h2>
-          <form onSubmit={handleChangePassword} className="space-y-3">
+          <div className="flex items-center justify-between">
             <div>
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5 block">New Password</label>
-              <input type="password" className={inputClass} placeholder="••••••••" minLength={6}
-                value={pwNew} onChange={e => setPwNew(e.target.value)} required />
+              <p className="text-sm font-semibold text-gray-800">Password</p>
+              <p className="text-xs text-gray-400 mt-0.5">Update your login password</p>
             </div>
-            <div>
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5 block">Confirm New Password</label>
-              <input type="password" className={inputClass} placeholder="••••••••" minLength={6}
-                value={pwConfirm} onChange={e => setPwConfirm(e.target.value)} required />
-            </div>
-            {pwStatus && (
-              <div className={`rounded-xl px-4 py-3 text-xs ${
-                pwStatus === 'success'
-                  ? 'bg-emerald-50 border border-emerald-100 text-emerald-700'
-                  : 'bg-red-50 border border-red-100 text-red-600'
-              }`}>
-                {pwStatus === 'success' ? 'Password updated successfully.' : pwStatus}
-              </div>
-            )}
-            <button type="submit" disabled={pwLoading}
-              className="w-full bg-brand-500 text-white font-semibold text-sm py-3 rounded-xl disabled:opacity-40">
-              {pwLoading ? 'Updating...' : 'Update Password'}
+            <button onClick={() => { setShowPwModal(true); setPwNew(''); setPwConfirm(''); setPwStatus(null) }}
+              className="text-xs font-semibold text-brand-500 border border-brand-200 px-3 py-1.5 rounded-lg hover:bg-brand-50 transition-colors">
+              Change Password
             </button>
-          </form>
+          </div>
         </div>
+
+        {/* Change Password modal */}
+        {showPwModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-5"
+            onClick={e => { if (e.target === e.currentTarget) setShowPwModal(false) }}>
+            <div className="absolute inset-0 bg-black/40" />
+            <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+              <h3 className="text-base font-bold text-gray-900 mb-4">Change Password</h3>
+              <form onSubmit={handleChangePassword} className="space-y-3">
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5 block">New Password</label>
+                  <input type="password" className={inputClass} placeholder="••••••••" minLength={6}
+                    value={pwNew} onChange={e => setPwNew(e.target.value)} required autoFocus />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5 block">Confirm New Password</label>
+                  <input type="password" className={inputClass} placeholder="••••••••" minLength={6}
+                    value={pwConfirm} onChange={e => setPwConfirm(e.target.value)} required />
+                </div>
+                {pwStatus && (
+                  <div className={`rounded-xl px-4 py-3 text-xs ${
+                    pwStatus === 'success'
+                      ? 'bg-emerald-50 border border-emerald-100 text-emerald-700'
+                      : 'bg-red-50 border border-red-100 text-red-600'
+                  }`}>
+                    {pwStatus === 'success' ? '✅ Password updated!' : pwStatus}
+                  </div>
+                )}
+                <div className="flex gap-3 pt-1">
+                  <button type="button" onClick={() => setShowPwModal(false)}
+                    className="flex-1 border border-gray-200 text-gray-600 font-semibold text-sm py-3 rounded-xl">
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={pwLoading}
+                    className="flex-1 bg-brand-500 text-white font-semibold text-sm py-3 rounded-xl disabled:opacity-40">
+                    {pwLoading ? 'Updating...' : 'Update'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
 
 
 
