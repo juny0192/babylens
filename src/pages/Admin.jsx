@@ -745,8 +745,8 @@ export default function Admin() {
         </>
         )}
 
-        {/* Existing products */}
-        <div className={cardClass}>
+        {/* Existing products — hidden on Users tab */}
+        {activeTab !== 'users' && <div className={cardClass}>
           <h2 className="text-sm font-bold text-gray-800 mb-4">
             Existing Products
             <span className="ml-2 text-gray-400 font-normal">({products.length})</span>
@@ -789,7 +789,7 @@ export default function Admin() {
               ))}
             </div>
           )}
-        </div>
+        </div>}
       </div>
     </div>
   )
