@@ -47,8 +47,13 @@ export default function Admin() {
   const [products, setProducts] = useState([])
   const [listLoading, setListLoading] = useState(true)
 
+  // --- Users state ---
+  const [users, setUsers] = useState([])
+  const [usersLoading, setUsersLoading] = useState(false)
+  const [usersError, setUsersError] = useState(null)
+
   // --- Bulk Generate state ---
-  const [activeTab, setActiveTab] = useState('single') // 'single' | 'bulk'
+  const [activeTab, setActiveTab] = useState('single') // 'single' | 'bulk' | 'users'
   const [bulkCategory, setBulkCategory] = useState('All')
   const [bulkTier, setBulkTier] = useState('All')
   const [bulkLoading, setBulkLoading] = useState(false)
@@ -83,6 +88,23 @@ export default function Admin() {
   }, [])
 
   useEffect(() => { if (unlocked) loadProducts() }, [unlocked, loadProducts])
+
+  const loadUsers = useCallback(async () => {
+    setUsersLoading(true)
+    setUsersError(null)
+    try {
+      const res = await fetch('/api/list-users')
+      if (!res.ok) throw new Error((await res.json()).error || `Error ${res.status}`)
+      const data = await res.json()
+      setUsers(data.users)
+    } catch (err) {
+      setUsersError(err.message)
+    } finally {
+      setUsersLoading(false)
+    }
+  }, [])
+
+  useEffect(() => { if (unlocked && activeTab === 'users') loadUsers() }, [unlocked, activeTab, loadUsers])
 
   // --- Auto-sum mentions ---
   function recalcMentions(sources) {
@@ -295,7 +317,7 @@ export default function Admin() {
 
         {/* Tab bar */}
         <div className="flex bg-white border border-gray-100 rounded-2xl p-1 shadow-sm">
-          {[['single', 'Add Product'], ['bulk', 'Bulk Generate']].map(([key, label]) => (
+          {[['single', 'Add Product'], ['bulk', 'Bulk Generate'], ['users', 'Users']].map(([key, label]) => (
             <button key={key} onClick={() => setActiveTab(key)}
               className={`flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all ${
                 activeTab === key
@@ -417,6 +439,58 @@ export default function Admin() {
               </>
             )}
           </>
+        )}
+
+        {/* Users tab */}
+        {activeTab === 'users' && (
+          <div className={cardClass}>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-bold text-gray-800">
+                Accounts
+                {!usersLoading && <span className="ml-2 text-gray-400 font-normal">({users.length})</span>}
+              </h2>
+              <button onClick={loadUsers} className="text-xs text-brand-500 font-semibold">Refresh</button>
+            </div>
+
+            {usersLoading ? (
+              <div className="space-y-3">
+                {[...Array(4)].map((_, i) => <div key={i} className="h-14 bg-gray-50 rounded-xl animate-pulse" />)}
+              </div>
+            ) : usersError ? (
+              <p className="text-sm text-red-500 text-center py-4">{usersError}</p>
+            ) : users.length === 0 ? (
+              <p className="text-sm text-gray-400 text-center py-4">No users found.</p>
+            ) : (
+              <div className="space-y-2">
+                {users.map((u, i) => (
+                  <div key={u.id} className="flex items-start gap-3 py-3 border-b border-gray-50 last:border-0">
+                    <div className="w-8 h-8 rounded-full bg-brand-100 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-bold text-brand-500">{u.email?.[0]?.toUpperCase()}</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-gray-800 truncate">{u.email}</p>
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-0.5">
+                        <span className="text-[11px] text-gray-400">
+                          Joined {new Date(u.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </span>
+                        {u.lastSignIn && (
+                          <span className="text-[11px] text-gray-400">
+                            Last login {new Date(u.lastSignIn).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          </span>
+                        )}
+                        <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${
+                          u.emailConfirmed ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+                        }`}>
+                          {u.emailConfirmed ? 'Verified' : 'Unverified'}
+                        </span>
+                      </div>
+                    </div>
+                    <span className="text-xs text-gray-300 flex-shrink-0 mt-1">#{i + 1}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         )}
 
         {/* Single product tab */}
