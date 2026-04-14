@@ -93,11 +93,20 @@ Guidelines:
       await Promise.all(products.map(async (p) => {
         try {
           const q = encodeURIComponent(`${p.brand} ${p.name} baby product`)
-          const url = `https://www.googleapis.com/customsearch/v1?key=${googleKey}&cx=${cseId}&q=${q}&searchType=image&num=1&imgSize=medium`
+          const url = `https://www.googleapis.com/customsearch/v1?key=${googleKey}&cx=${cseId}&q=${q}&num=5`
           const r = await fetch(url)
           if (r.ok) {
             const d = await r.json()
-            if (d.items?.[0]?.link) p.image_url = d.items[0].link
+            for (const item of d.items || []) {
+              const candidate =
+                item.pagemap?.cse_image?.[0]?.src ||
+                item.pagemap?.cse_thumbnail?.[0]?.src ||
+                item.pagemap?.metatags?.[0]?.['og:image']
+              if (candidate && candidate.startsWith('http')) {
+                p.image_url = candidate
+                break
+              }
+            }
           }
         } catch {}
       }))
