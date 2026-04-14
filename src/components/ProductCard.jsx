@@ -32,14 +32,21 @@ export default function ProductCard({ product, rank }) {
       className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex gap-3 cursor-pointer active:scale-[0.98] transition-transform"
       onClick={() => navigate(`/product/${product.id}`)}
     >
-      {/* Rank */}
-      {rank !== undefined && (
-        <div className="flex-shrink-0 w-7 flex items-start pt-0.5">
-          <span className={`text-sm font-bold ${rank <= 3 ? 'text-brand-500' : 'text-gray-300'}`}>
+      {/* Product image or rank */}
+      <div className="flex-shrink-0 flex flex-col items-center gap-1">
+        {product.imageUrl ? (
+          <img src={product.imageUrl} alt="" className="w-12 h-12 object-contain rounded-lg bg-gray-50" />
+        ) : (
+          <div className="w-12 h-12 rounded-lg bg-gray-50 flex items-center justify-center">
+            <span className="text-2xl opacity-30">📦</span>
+          </div>
+        )}
+        {rank !== undefined && (
+          <span className={`text-[10px] font-bold ${rank <= 3 ? 'text-brand-500' : 'text-gray-300'}`}>
             #{rank}
           </span>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Main content */}
       <div className="flex-1 min-w-0">

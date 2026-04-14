@@ -23,5 +23,6 @@ export function mapProduct(row) {
     bestFor: row.best_for,
     recall: row.recall,
     recallDetails: row.recall_details,
+    imageUrl: row.image_url,
   }
 }

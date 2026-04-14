@@ -77,6 +77,12 @@ export default function ProductDetail() {
       <div className="px-4 pt-5 space-y-5">
         {/* Product header */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          {product.imageUrl && (
+            <div className="flex justify-center mb-4">
+              <img src={product.imageUrl} alt={product.name}
+                className="w-40 h-40 object-contain rounded-xl bg-gray-50" />
+            </div>
+          )}
           <p className="text-xs text-gray-400 font-medium mb-1">{product.brand}</p>
           <h1 className="text-xl font-bold text-gray-900 mb-3">{product.name}</h1>
 

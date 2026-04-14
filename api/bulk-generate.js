@@ -80,11 +80,28 @@ Guidelines:
       return res.status(502).json({ error: 'AI did not return an array', raw: cleaned })
     }
 
-    // Enforce mentions = sum of sources for each product
+    // Enforce mentions = sum of sources, then find images
     const products = parsed.map(p => {
       const sourceSum = Object.values(p.sources || {}).reduce((a, b) => a + Number(b), 0)
       return { ...p, mentions: sourceSum }
     })
+
+    // Auto-find images for each product using Google Custom Search
+    const googleKey = process.env.VITE_YOUTUBE_API_KEY
+    const cseId = process.env.GOOGLE_CSE_ID
+    if (googleKey && cseId) {
+      await Promise.all(products.map(async (p) => {
+        try {
+          const q = encodeURIComponent(`${p.brand} ${p.name} baby product`)
+          const url = `https://www.googleapis.com/customsearch/v1?key=${googleKey}&cx=${cseId}&q=${q}&searchType=image&num=1&imgSize=medium`
+          const r = await fetch(url)
+          if (r.ok) {
+            const d = await r.json()
+            if (d.items?.[0]?.link) p.image_url = d.items[0].link
+          }
+        } catch {}
+      }))
+    }
 
     res.status(200).json({ products })
   } catch (err) {

@@ -11,6 +11,7 @@ const BULK_TIERS = ['All', 'Budget', 'Mid', 'Premium']
 const EMPTY_FORM = {
   name: '',
   brand: '',
+  image_url: '',
   category: '',
   price: '',
   price_tier: '',
@@ -47,6 +48,8 @@ export default function Admin() {
   const [products, setProducts] = useState([])
   const [listLoading, setListLoading] = useState(true)
   const [editingId, setEditingId] = useState(null)
+  const [findingImages, setFindingImages] = useState(false)
+  const [imageProgress, setImageProgress] = useState('')
 
   // --- Users state ---
   const [users, setUsers] = useState([])
@@ -82,7 +85,7 @@ export default function Admin() {
     setListLoading(true)
     const { data } = await supabase
       .from('products')
-      .select('id, name, brand, category, price_tier')
+      .select('id, name, brand, category, price_tier, image_url')
       .order('id', { ascending: false })
     setProducts(data || [])
     setListLoading(false)
@@ -131,6 +134,7 @@ export default function Admin() {
       const data = await res.json()
       setFormData(prev => ({
         ...prev,
+        image_url: data.image_url || prev.image_url || '',
         category: data.category || '',
         price: String(data.price || ''),
         price_tier: data.price_tier || '',
@@ -161,6 +165,7 @@ export default function Admin() {
     setFormData({
       name: data.name,
       brand: data.brand,
+      image_url: data.image_url || '',
       category: data.category,
       price: String(data.price),
       price_tier: data.price_tier,
@@ -192,6 +197,7 @@ export default function Admin() {
       id: editingId || Date.now(),
       name: formData.name.trim(),
       brand: formData.brand.trim(),
+      image_url: formData.image_url.trim() || null,
       category: formData.category,
       price: Number(formData.price),
       price_tier: formData.price_tier,
@@ -270,6 +276,7 @@ export default function Admin() {
         id: base + i,
         name: p.name,
         brand: p.brand,
+        image_url: p.image_url || null,
         category: p.category,
         price: Number(p.price),
         price_tier: p.price_tier,
@@ -298,6 +305,29 @@ export default function Admin() {
   async function handleDelete(id) {
     if (!window.confirm('Delete this product?')) return
     await supabase.from('products').delete().eq('id', id)
+    loadProducts()
+  }
+
+  // --- Batch find images for products missing one ---
+  async function handleFindImages() {
+    const missing = products.filter(p => !p.image_url)
+    if (missing.length === 0) { setImageProgress('All products already have images!'); return }
+    setFindingImages(true)
+    let found = 0
+    for (let i = 0; i < missing.length; i++) {
+      const p = missing[i]
+      setImageProgress(`Searching ${i + 1}/${missing.length}: ${p.brand} ${p.name}...`)
+      try {
+        const res = await fetch(`/api/search-image?q=${encodeURIComponent(`${p.brand} ${p.name} baby product`)}`)
+        const data = await res.json()
+        if (data.imageUrl) {
+          await supabase.from('products').update({ image_url: data.imageUrl }).eq('id', p.id)
+          found++
+        }
+      } catch {}
+    }
+    setImageProgress(`Done! Found images for ${found}/${missing.length} products.`)
+    setFindingImages(false)
     loadProducts()
   }
 
@@ -577,6 +607,40 @@ export default function Admin() {
           {aiError && <p className="text-xs text-red-500 mt-2">{aiError}</p>}
         </div>
 
+        {/* Section 1.5 — Product Image */}
+        <div className={cardClass}>
+          <h2 className="text-sm font-bold text-gray-800 mb-4">Product Image</h2>
+          <label className={labelClass}>Image URL</label>
+          <div className="flex gap-2 mb-3">
+            <input className={inputClass} placeholder="https://example.com/product.jpg" value={formData.image_url}
+              onChange={e => setFormData(p => ({ ...p, image_url: e.target.value }))} />
+            {formData.name && formData.brand && !formData.image_url && (
+              <button type="button"
+                onClick={async () => {
+                  try {
+                    const res = await fetch(`/api/search-image?q=${encodeURIComponent(`${formData.brand} ${formData.name} baby product`)}`)
+                    const data = await res.json()
+                    if (data.imageUrl) setFormData(p => ({ ...p, image_url: data.imageUrl }))
+                  } catch {}
+                }}
+                className="flex-shrink-0 bg-brand-500 text-white text-xs font-semibold px-3 rounded-xl whitespace-nowrap">
+                Find
+              </button>
+            )}
+          </div>
+          {formData.image_url && (
+            <div className="relative">
+              <img src={formData.image_url} alt="Product preview"
+                className="w-full h-48 object-contain bg-gray-50 rounded-xl border border-gray-100"
+                onError={e => { e.target.style.display = 'none' }} />
+              <button onClick={() => setFormData(p => ({ ...p, image_url: '' }))}
+                className="absolute top-2 right-2 bg-white rounded-full p-1 shadow border border-gray-200 text-gray-400 hover:text-red-500">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12" /></svg>
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* Section 2 — Core Details */}
         <div className={cardClass}>
           <h2 className="text-sm font-bold text-gray-800 mb-4">Core Details</h2>
@@ -747,10 +811,19 @@ export default function Admin() {
 
         {/* Existing products — hidden on Users tab */}
         {activeTab !== 'users' && <div className={cardClass}>
-          <h2 className="text-sm font-bold text-gray-800 mb-4">
-            Existing Products
-            <span className="ml-2 text-gray-400 font-normal">({products.length})</span>
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-bold text-gray-800">
+              Existing Products
+              <span className="ml-2 text-gray-400 font-normal">({products.length})</span>
+            </h2>
+            <button onClick={handleFindImages} disabled={findingImages}
+              className="text-xs font-semibold text-brand-500 border border-brand-200 px-3 py-1.5 rounded-lg hover:bg-brand-50 transition-colors disabled:opacity-40">
+              {findingImages ? 'Searching...' : '🖼️ Find Missing Images'}
+            </button>
+          </div>
+          {imageProgress && (
+            <p className="text-xs text-gray-500 mb-3 bg-gray-50 rounded-lg px-3 py-2">{imageProgress}</p>
+          )}
           {listLoading ? (
             <div className="space-y-3">
               {[...Array(4)].map((_, i) => <div key={i} className="h-12 bg-gray-50 rounded-xl animate-pulse" />)}
@@ -762,6 +835,11 @@ export default function Admin() {
               {products.map(p => (
                 <div key={p.id} className="flex items-center justify-between py-2.5 border-b border-gray-50 last:border-0">
                   <div className="flex items-center gap-2 min-w-0">
+                    {p.image_url ? (
+                      <img src={p.image_url} alt="" className="w-8 h-8 object-contain rounded flex-shrink-0 bg-gray-50" />
+                    ) : (
+                      <div className="w-8 h-8 rounded flex-shrink-0 bg-gray-100 flex items-center justify-center text-gray-300 text-[10px]">—</div>
+                    )}
                     <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${categoryColors[p.category] || 'bg-gray-100 text-gray-600'}`}>
                       {p.category}
                     </span>
