@@ -46,6 +46,7 @@ export default function Admin() {
 
   const [products, setProducts] = useState([])
   const [listLoading, setListLoading] = useState(true)
+  const [editingId, setEditingId] = useState(null)
 
   // --- Users state ---
   const [users, setUsers] = useState([])
@@ -152,12 +153,43 @@ export default function Admin() {
     }
   }
 
+  // --- Edit ---
+  async function handleEdit(p) {
+    const { data } = await supabase.from('products').select('*').eq('id', p.id).single()
+    if (!data) return
+    setEditingId(data.id)
+    setFormData({
+      name: data.name,
+      brand: data.brand,
+      category: data.category,
+      price: String(data.price),
+      price_tier: data.price_tier,
+      age_range: data.age_range || [],
+      mentions: String(data.mentions),
+      sources: Object.fromEntries(SOURCES.map(s => [s, String(data.sources?.[s] || '')])),
+      verdict: data.verdict || '',
+      pros: data.pros?.length ? data.pros : ['', '', ''],
+      cons: data.cons?.length ? data.cons : ['', ''],
+      best_for: data.best_for || '',
+      recall: data.recall || false,
+      recall_details: data.recall_details || null,
+    })
+    setActiveTab('single')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  function handleCancelEdit() {
+    setEditingId(null)
+    setFormData(EMPTY_FORM)
+    setSaveStatus(null)
+  }
+
   // --- Save ---
   async function handleSave() {
     setSaveLoading(true)
     setSaveStatus(null)
     const row = {
-      id: Date.now(),
+      id: editingId || Date.now(),
       name: formData.name.trim(),
       brand: formData.brand.trim(),
       category: formData.category,
@@ -181,6 +213,7 @@ export default function Admin() {
     } else {
       setSaveStatus('success')
       setFormData(EMPTY_FORM)
+      setEditingId(null)
       loadProducts()
       setTimeout(() => setSaveStatus(null), 3000)
     }
@@ -497,6 +530,19 @@ export default function Admin() {
         {activeTab === 'single' && (
         <>
 
+        {/* Edit mode banner */}
+        {editingId && (
+          <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3">
+            <div className="flex items-center gap-2">
+              <span className="text-sm">✏️</span>
+              <p className="text-sm font-semibold text-amber-700">Editing existing product</p>
+            </div>
+            <button onClick={handleCancelEdit} className="text-xs font-semibold text-amber-600 hover:text-amber-800">
+              Cancel
+            </button>
+          </div>
+        )}
+
         {/* Section 1 — Identity + AI */}
         <div className={cardClass}>
           <h2 className="text-sm font-bold text-gray-800 mb-4">Product Identity</h2>
@@ -694,7 +740,7 @@ export default function Admin() {
         )}
         <button onClick={handleSave} disabled={saveLoading || !formData.name || !formData.category}
           className="w-full bg-brand-500 text-white font-bold text-sm py-4 rounded-2xl disabled:opacity-40 shadow-sm">
-          {saveLoading ? 'Saving...' : 'Save to Database'}
+          {saveLoading ? 'Saving...' : editingId ? 'Update Product' : 'Save to Database'}
         </button>
         </>
         )}
@@ -724,12 +770,21 @@ export default function Admin() {
                       <p className="text-xs text-gray-400 truncate">{p.brand}</p>
                     </div>
                   </div>
-                  <button onClick={() => handleDelete(p.id)}
-                    className="flex-shrink-0 p-2 text-gray-300 hover:text-red-400 transition-colors ml-2">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14H6L5 6" /><path d="M10 11v6M14 11v6" /><path d="M9 6V4h6v2" />
-                    </svg>
-                  </button>
+                  <div className="flex items-center gap-1 ml-2 flex-shrink-0">
+                    <button onClick={() => handleEdit(p)}
+                      className="p-2 text-gray-300 hover:text-brand-500 transition-colors">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                      </svg>
+                    </button>
+                    <button onClick={() => handleDelete(p.id)}
+                      className="p-2 text-gray-300 hover:text-red-400 transition-colors">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14H6L5 6" /><path d="M10 11v6M14 11v6" /><path d="M9 6V4h6v2" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
