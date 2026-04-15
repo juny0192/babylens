@@ -86,27 +86,18 @@ Guidelines:
       return { ...p, mentions: sourceSum }
     })
 
-    // Auto-find images for each product using Google Custom Search
-    const googleKey = process.env.VITE_YOUTUBE_API_KEY
-    const cseId = process.env.GOOGLE_CSE_ID
-    if (googleKey && cseId) {
+    // Auto-find images for each product using SerpAPI Google Images
+    const serpApiKey = process.env.SERPAPI_KEY
+    if (serpApiKey) {
       await Promise.all(products.map(async (p) => {
         try {
           const q = encodeURIComponent(`${p.brand} ${p.name} baby product`)
-          const url = `https://www.googleapis.com/customsearch/v1?key=${googleKey}&cx=${cseId}&q=${q}&num=5`
+          const url = `https://serpapi.com/search.json?engine=google_images&q=${q}&num=3&api_key=${serpApiKey}`
           const r = await fetch(url)
           if (r.ok) {
             const d = await r.json()
-            for (const item of d.items || []) {
-              const candidate =
-                item.pagemap?.cse_image?.[0]?.src ||
-                item.pagemap?.cse_thumbnail?.[0]?.src ||
-                item.pagemap?.metatags?.[0]?.['og:image']
-              if (candidate && candidate.startsWith('http')) {
-                p.image_url = candidate
-                break
-              }
-            }
+            const img = d.images_results?.[0]?.thumbnail || d.images_results?.[0]?.original
+            if (img) p.image_url = img
           }
         } catch {}
       }))
