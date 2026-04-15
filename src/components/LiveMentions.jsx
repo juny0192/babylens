@@ -113,9 +113,16 @@ const YOUTUBE_SORTS = [
   { key: '6months', label: 'Most Viewed in 6M', order: 'viewCount', publishedAfter: () => new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString() },
 ]
 
+const REDDIT_SORTS = [
+  { key: 'newest', label: 'Newest', sort: 'new', t: 'all' },
+  { key: 'most_upvoted', label: 'Most Upvoted', sort: 'top', t: 'all' },
+  { key: '6months', label: 'Most Upvoted in 6M', sort: 'top', t: '6m' },
+]
+
 export default function LiveMentions({ product }) {
   const [tab, setTab] = useState('reddit')
   const [youtubeSort, setYoutubeSort] = useState('newest')
+  const [redditSort, setRedditSort] = useState('newest')
   const [redditPosts, setRedditPosts] = useState([])
   const [youtubePosts, setYoutubePosts] = useState([])
   const [redditLoading, setRedditLoading] = useState(true)
@@ -124,11 +131,14 @@ export default function LiveMentions({ product }) {
   const [youtubeError, setYoutubeError] = useState(null)
 
   useEffect(() => {
-    searchReddit(product.name, product.brand)
+    setRedditLoading(true)
+    setRedditError(null)
+    const sort = REDDIT_SORTS.find(s => s.key === redditSort)
+    searchReddit(product.name, product.brand, { sort: sort.sort, t: sort.t })
       .then(setRedditPosts)
       .catch((e) => setRedditError(e.message))
       .finally(() => setRedditLoading(false))
-  }, [product.id])
+  }, [product.id, redditSort])
 
   useEffect(() => {
     setYoutubeLoading(true)
@@ -173,6 +183,20 @@ export default function LiveMentions({ product }) {
               <button key={s.key} onClick={() => setYoutubeSort(s.key)}
                 className={`flex-shrink-0 px-3 py-1 rounded-full text-[11px] font-semibold border transition-all ${
                   youtubeSort === s.key
+                    ? 'bg-brand-500 border-brand-500 text-white'
+                    : 'bg-white border-gray-200 text-gray-500'
+                }`}>
+                {s.label}
+              </button>
+            ))}
+          </div>
+        )}
+        {tab === 'reddit' && (
+          <div className="flex gap-1.5 pt-3 pb-1 overflow-x-auto scrollbar-hide">
+            {REDDIT_SORTS.map(s => (
+              <button key={s.key} onClick={() => setRedditSort(s.key)}
+                className={`flex-shrink-0 px-3 py-1 rounded-full text-[11px] font-semibold border transition-all ${
+                  redditSort === s.key
                     ? 'bg-brand-500 border-brand-500 text-white'
                     : 'bg-white border-gray-200 text-gray-500'
                 }`}>
