@@ -213,7 +213,17 @@ export default function Admin() {
       recall: formData.recall,
       recall_details: formData.recall ? formData.recall_details : null,
     }
-    const { error } = await supabase.from('products').upsert(row)
+    let error
+    if (editingId) {
+      // Use explicit UPDATE for edits (upsert + RLS can silently fail)
+      const { id, ...updates } = row
+      const result = await supabase.from('products').update(updates).eq('id', editingId)
+      error = result.error
+      console.log('Update result:', { editingId, error: result.error, status: result.status, count: result.count })
+    } else {
+      const result = await supabase.from('products').insert(row)
+      error = result.error
+    }
     if (error) {
       console.error('Save error:', error)
       setSaveStatus('error')
