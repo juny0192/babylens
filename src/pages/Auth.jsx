@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useLanguage } from '../context/LanguageContext'
 
 export default function Auth() {
   const navigate = useNavigate()
   const { signIn, signUp } = useAuth()
+  const { t } = useLanguage()
 
   const [tab, setTab] = useState('login') // 'login' | 'signup'
   const [email, setEmail] = useState('')
@@ -31,7 +33,7 @@ export default function Auth() {
       if (error) {
         setError(error.message)
       } else {
-        setSuccess('Check your email for a verification link. Once verified, you can log in.')
+        setSuccess(t('checkYourEmail'))
         setEmail('')
         setPassword('')
       }
@@ -51,14 +53,14 @@ export default function Auth() {
             <span className="text-brand-500">Baby</span>
             <span className="text-gray-800">Lens</span>
           </h1>
-          <p className="text-sm text-gray-400 mt-1">The trusted baby product guide</p>
+          <p className="text-sm text-gray-400 mt-1">{t('tagline')}</p>
         </div>
 
         {/* Card */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
           {/* Tabs */}
           <div className="flex border-b border-gray-100">
-            {[['login', 'Log In'], ['signup', 'Sign Up']].map(([key, label]) => (
+            {[['login', t('login')], ['signup', t('signUp')]].map(([key, label]) => (
               <button key={key} onClick={() => { setTab(key); setError(null); setSuccess(null) }}
                 className={`flex-1 py-3.5 text-sm font-semibold transition-colors ${
                   tab === key ? 'text-brand-500 border-b-2 border-brand-500' : 'text-gray-400'
@@ -70,7 +72,7 @@ export default function Auth() {
 
           <form onSubmit={handleSubmit} className="p-6 space-y-4">
             <div>
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5 block">Email</label>
+              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5 block">{t('email')}</label>
               <input
                 type="email"
                 required
@@ -81,7 +83,7 @@ export default function Auth() {
               />
             </div>
             <div>
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5 block">Password</label>
+              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5 block">{t('password')}</label>
               <input
                 type="password"
                 required
@@ -92,7 +94,7 @@ export default function Auth() {
                 className={inputClass}
               />
               {tab === 'signup' && (
-                <p className="text-[11px] text-gray-400 mt-1">Minimum 6 characters</p>
+                <p className="text-[11px] text-gray-400 mt-1">{t('minSixChars')}</p>
               )}
             </div>
 
@@ -109,7 +111,7 @@ export default function Auth() {
 
             <button type="submit" disabled={loading}
               className="w-full bg-brand-500 text-white font-bold text-sm py-3.5 rounded-xl disabled:opacity-40">
-              {loading ? (tab === 'login' ? 'Logging in...' : 'Creating account...') : (tab === 'login' ? 'Log In' : 'Create Account')}
+              {loading ? (tab === 'login' ? t('loggingIn') : t('creatingAccount')) : (tab === 'login' ? t('login') : t('createAccount'))}
             </button>
           </form>
         </div>
@@ -120,14 +122,14 @@ export default function Auth() {
               <path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" />
               <path d="M9 21V12h6v9" />
             </svg>
-            <span className="text-xs font-medium">Home</span>
+            <span className="text-xs font-medium">{t('home')}</span>
           </Link>
           <Link to="/discover" className="flex flex-col items-center gap-1 text-gray-400 hover:text-brand-500 transition-colors">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8" />
               <path d="M21 21l-4.35-4.35" />
             </svg>
-            <span className="text-xs font-medium">Discover</span>
+            <span className="text-xs font-medium">{t('discover')}</span>
           </Link>
         </div>
       </div>

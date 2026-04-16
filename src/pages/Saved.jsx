@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSaved } from '../context/SavedContext'
 import { useAuth } from '../context/AuthContext'
+import { useLanguage } from '../context/LanguageContext'
 import { supabase, mapProduct } from '../lib/supabase'
 import ProductCard from '../components/ProductCard'
 
 export default function Saved() {
   const { saved } = useSaved()
   const { user } = useAuth()
+  const { t } = useLanguage()
   const navigate = useNavigate()
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -36,10 +38,10 @@ export default function Saved() {
             <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
           </svg>
         </div>
-        <h2 className="text-lg font-bold text-gray-800">Log in to save products</h2>
-        <p className="text-sm text-gray-400 max-w-xs">Create an account to save your favorite baby products and access them anywhere.</p>
+        <h2 className="text-lg font-bold text-gray-800">{t('loginToSave')}</h2>
+        <p className="text-sm text-gray-400 max-w-xs">{t('createAccountToSave')}</p>
         <button onClick={() => navigate('/auth')} className="bg-brand-500 text-white font-semibold text-sm px-6 py-3 rounded-xl">
-          Log In or Sign Up
+          {t('logInOrSignUp')}
         </button>
       </div>
     )
@@ -48,9 +50,9 @@ export default function Saved() {
   return (
     <div className="min-h-screen bg-gray-50 pb-24">
       <div className="sticky top-14 z-30 bg-white border-b border-gray-100 px-4 py-3">
-        <h1 className="text-lg font-bold text-gray-900">Saved Products</h1>
+        <h1 className="text-lg font-bold text-gray-900">{t('savedProducts')}</h1>
         {products.length > 0 && (
-          <p className="text-xs text-gray-400 mt-0.5">{products.length} item{products.length !== 1 ? 's' : ''} saved</p>
+          <p className="text-xs text-gray-400 mt-0.5">{products.length} {products.length !== 1 ? t('itemsSaved') : t('itemSaved')}</p>
         )}
       </div>
 
@@ -68,10 +70,10 @@ export default function Saved() {
                 <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
               </svg>
             </div>
-            <h2 className="text-lg font-bold text-gray-800 mb-1">No saved products yet</h2>
-            <p className="text-sm text-gray-400 max-w-xs">Tap the heart icon on any product to save it here.</p>
+            <h2 className="text-lg font-bold text-gray-800 mb-1">{t('noSavedYet')}</h2>
+            <p className="text-sm text-gray-400 max-w-xs">{t('tapHeartToSave')}</p>
             <button onClick={() => navigate('/')} className="mt-6 bg-brand-500 text-white font-semibold text-sm px-6 py-3 rounded-xl">
-              Browse Products
+              {t('browseProducts')}
             </button>
           </div>
         ) : (

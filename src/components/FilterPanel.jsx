@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { CATEGORIES, SOURCES, AGE_RANGES, PRICE_TIERS } from '../data/products'
+import { useLanguage } from '../context/LanguageContext'
 
 function Chip({ label, active, onClick, color }) {
   return (
@@ -18,6 +19,7 @@ function Chip({ label, active, onClick, color }) {
 
 export default function FilterPanel({ filters, onChange }) {
   const [open, setOpen] = useState(false)
+  const { t, tCategory, tTier } = useLanguage()
 
   function toggle(key, value) {
     const current = filters[key]
@@ -46,7 +48,7 @@ export default function FilterPanel({ filters, onChange }) {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
           </svg>
-          Filters
+          {t('filters')}
           {activeCount > 0 && (
             <span className="bg-brand-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
               {activeCount}
@@ -67,7 +69,7 @@ export default function FilterPanel({ filters, onChange }) {
             }
             className="text-xs text-brand-500 font-medium"
           >
-            Clear all
+            {t('clearAll')}
           </button>
         )}
       </div>
@@ -77,7 +79,7 @@ export default function FilterPanel({ filters, onChange }) {
         <div className="px-4 pb-4 space-y-4 border-t border-gray-50">
           {/* Sources */}
           <div>
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2 mt-3">Source</p>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2 mt-3">{t('source')}</p>
             <div className="flex flex-wrap gap-2">
               {SOURCES.map((s) => (
                 <Chip key={s} label={s} active={filters.sources.includes(s)} onClick={() => toggle('sources', s)} />
@@ -87,17 +89,17 @@ export default function FilterPanel({ filters, onChange }) {
 
           {/* Categories */}
           <div>
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Category</p>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">{t('category')}</p>
             <div className="flex flex-wrap gap-2">
               {CATEGORIES.map((c) => (
-                <Chip key={c} label={c} active={filters.categories.includes(c)} onClick={() => toggle('categories', c)} />
+                <Chip key={c} label={tCategory(c)} active={filters.categories.includes(c)} onClick={() => toggle('categories', c)} />
               ))}
             </div>
           </div>
 
           {/* Age */}
           <div>
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Age Range</p>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">{t('ageRange')}</p>
             <div className="flex flex-wrap gap-2">
               {AGE_RANGES.map((a) => (
                 <Chip key={a} label={a} active={filters.ages.includes(a)} onClick={() => toggle('ages', a)} />
@@ -108,9 +110,9 @@ export default function FilterPanel({ filters, onChange }) {
           {/* Price */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Max Price</p>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{t('maxPrice')}</p>
               <span className="text-xs font-bold text-gray-700">
-                {filters.maxPrice >= 1200 ? 'Any' : `$${filters.maxPrice}`}
+                {filters.maxPrice >= 1200 ? t('any') : `$${filters.maxPrice}`}
               </span>
             </div>
             <input
@@ -123,8 +125,8 @@ export default function FilterPanel({ filters, onChange }) {
               className="w-full accent-brand-500"
             />
             <div className="flex gap-2 mt-2">
-              {PRICE_TIERS.map((t) => (
-                <Chip key={t} label={t} active={filters.tiers.includes(t)} onClick={() => toggle('tiers', t)} />
+              {PRICE_TIERS.map((tier) => (
+                <Chip key={tier} label={tTier(tier)} active={filters.tiers.includes(tier)} onClick={() => toggle('tiers', tier)} />
               ))}
             </div>
           </div>
@@ -135,8 +137,8 @@ export default function FilterPanel({ filters, onChange }) {
             className="flex items-center justify-between bg-gray-50 rounded-xl px-3 py-2.5 cursor-pointer select-none"
           >
             <div>
-              <p className="text-sm font-semibold text-gray-700">Hide recalled products</p>
-              <p className="text-xs text-gray-400">Only show products with no recall history</p>
+              <p className="text-sm font-semibold text-gray-700">{t('hideRecalledProducts')}</p>
+              <p className="text-xs text-gray-400">{t('onlyShowNoRecall')}</p>
             </div>
             <div className={`relative w-10 h-6 rounded-full transition-colors flex-shrink-0 ${
               filters.recallOnly ? 'bg-brand-500' : 'bg-gray-200'

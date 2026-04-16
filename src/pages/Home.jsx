@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useProducts } from '../hooks/useProducts'
+import { useLanguage } from '../context/LanguageContext'
 import ProductCard from '../components/ProductCard'
 import FilterPanel from '../components/FilterPanel'
 
@@ -36,6 +37,7 @@ function SkeletonCard() {
 }
 
 export default function Home() {
+  const { t } = useLanguage()
   const [searchParams] = useSearchParams()
   const initialCategory = searchParams.get('category')
 
@@ -68,7 +70,7 @@ export default function Home() {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search products, brands..."
+            placeholder={t('searchPlaceholder')}
             className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 pl-9 pr-4 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-transparent"
           />
           {query && (
@@ -90,16 +92,16 @@ export default function Home() {
           <div className="flex items-center justify-between mb-3">
             <p className="text-xs text-gray-400 font-medium">
               {products.length === totalCount
-                ? `All ${products.length} products`
-                : `${products.length} of ${totalCount} products`}
-              {' · '}ranked by mentions
+                ? t('allProducts', { n: products.length })
+                : t('nOfTotal', { n: products.length, total: totalCount })}
+              {' · '}{t('rankedByMentions')}
             </p>
           </div>
         )}
 
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4 text-sm text-red-600">
-            Failed to load products. Check your Supabase connection.
+            {t('failedToLoad')}
           </div>
         )}
 
@@ -110,8 +112,8 @@ export default function Home() {
         ) : products.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <span className="text-5xl mb-4">🔍</span>
-            <p className="text-gray-500 font-medium">No products match your filters</p>
-            <p className="text-sm text-gray-400 mt-1">Try adjusting or clearing your filters</p>
+            <p className="text-gray-500 font-medium">{t('noProductsMatch')}</p>
+            <p className="text-sm text-gray-400 mt-1">{t('tryAdjusting')}</p>
           </div>
         ) : (
           <div className="space-y-3">

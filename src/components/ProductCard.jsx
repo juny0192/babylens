@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useSaved } from '../context/SavedContext'
 import { useAuth } from '../context/AuthContext'
+import { useLanguage } from '../context/LanguageContext'
 
 const tierColors = {
   Budget: 'bg-emerald-100 text-emerald-700',
@@ -25,6 +26,7 @@ export default function ProductCard({ product, rank }) {
   const navigate = useNavigate()
   const { user } = useAuth()
   const { isSaved, toggleSaved } = useSaved()
+  const { t, tCategory, tTier } = useLanguage()
   const saved = isSaved(product.id)
 
   return (
@@ -85,10 +87,10 @@ export default function ProductCard({ product, rank }) {
         {/* Badges row */}
         <div className="flex flex-wrap gap-1.5 mt-2">
           <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${categoryColors[product.category] || 'bg-gray-100 text-gray-600'}`}>
-            {product.category}
+            {tCategory(product.category)}
           </span>
           <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${tierColors[product.priceTier]}`}>
-            {product.priceTier}
+            {tTier(product.priceTier)}
           </span>
           {product.recall && (
             <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-600 flex items-center gap-1">
@@ -104,7 +106,7 @@ export default function ProductCard({ product, rank }) {
             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
               <path d="M18 3a3 3 0 00-3 3v12a3 3 0 003 3 3 3 0 003-3 3 3 0 00-3-3H6a3 3 0 00-3 3 3 3 0 003 3 3 3 0 003-3V6a3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3h12a3 3 0 003-3 3 3 0 00-3-3z" />
             </svg>
-            <span className="text-xs font-medium">{product.mentions.toLocaleString()} mentions</span>
+            <span className="text-xs font-medium">{product.mentions.toLocaleString()} {t('mentions')}</span>
           </div>
         </div>
       </div>

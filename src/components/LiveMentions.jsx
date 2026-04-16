@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { searchReddit } from '../lib/reddit'
 import { searchYouTube } from '../lib/youtube'
+import { useLanguage } from '../context/LanguageContext'
 
 function timeAgo(ms) {
   const diff = Date.now() - ms
@@ -14,6 +15,7 @@ function timeAgo(ms) {
 }
 
 function RedditPost({ post }) {
+  const { t } = useLanguage()
   return (
     <a
       href={post.url}
@@ -35,7 +37,7 @@ function RedditPost({ post }) {
           <span className="text-[10px] text-gray-300">·</span>
           <span className="text-[10px] text-gray-400">↑ {post.score.toLocaleString()}</span>
           <span className="text-[10px] text-gray-300">·</span>
-          <span className="text-[10px] text-gray-400">{post.numComments} comments</span>
+          <span className="text-[10px] text-gray-400">{post.numComments} {t('comments')}</span>
           <span className="text-[10px] text-gray-300">·</span>
           <span className="text-[10px] text-gray-400">{timeAgo(post.created)}</span>
         </div>
@@ -108,18 +110,19 @@ function TabButton({ active, onClick, children }) {
 }
 
 const YOUTUBE_SORTS = [
-  { key: 'newest', label: 'Newest', order: 'date', publishedAfter: null },
-  { key: 'most_viewed', label: 'Most Viewed', order: 'viewCount', publishedAfter: null },
-  { key: '6months', label: 'Most Viewed in 6M', order: 'viewCount', publishedAfter: () => new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString() },
+  { key: 'newest', labelKey: 'newest', order: 'date', publishedAfter: null },
+  { key: 'most_viewed', labelKey: 'mostViewed', order: 'viewCount', publishedAfter: null },
+  { key: '6months', labelKey: 'mostViewedIn6M', order: 'viewCount', publishedAfter: () => new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString() },
 ]
 
 const REDDIT_SORTS = [
-  { key: 'newest', label: 'Newest', sort: 'new', t: 'all' },
-  { key: 'most_upvoted', label: 'Most Upvoted', sort: 'top', t: 'all' },
-  { key: '6months', label: 'Most Upvoted in 6M', sort: 'top', t: '6m' },
+  { key: 'newest', labelKey: 'newest', sort: 'new', timeRange: 'all' },
+  { key: 'most_upvoted', labelKey: 'mostUpvoted', sort: 'top', timeRange: 'all' },
+  { key: '6months', labelKey: 'mostUpvotedIn6M', sort: 'top', timeRange: '6m' },
 ]
 
 export default function LiveMentions({ product }) {
+  const { t } = useLanguage()
   const [tab, setTab] = useState('reddit')
   const [youtubeSort, setYoutubeSort] = useState('newest')
   const [redditSort, setRedditSort] = useState('newest')
@@ -134,7 +137,7 @@ export default function LiveMentions({ product }) {
     setRedditLoading(true)
     setRedditError(null)
     const sort = REDDIT_SORTS.find(s => s.key === redditSort)
-    searchReddit(product.name, product.brand, { sort: sort.sort, t: sort.t })
+    searchReddit(product.name, product.brand, { sort: sort.sort, t: sort.timeRange })
       .then(setRedditPosts)
       .catch((e) => setRedditError(e.message))
       .finally(() => setRedditLoading(false))
@@ -161,17 +164,17 @@ export default function LiveMentions({ product }) {
       <div className="px-5 pt-4 pb-0">
         <div className="flex items-center gap-2 mb-3">
           <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-          <h2 className="text-sm font-bold text-gray-800">Live Mentions</h2>
+          <h2 className="text-sm font-bold text-gray-800">{t('liveMentions')}</h2>
         </div>
         <div className="flex border-b border-gray-100">
           <TabButton active={tab === 'reddit'} onClick={() => setTab('reddit')}>
-            Reddit
+            {t('reddit')}
             {!redditLoading && !redditError && (
               <span className="ml-1 text-[10px] text-gray-400">({redditPosts.length})</span>
             )}
           </TabButton>
           <TabButton active={tab === 'youtube'} onClick={() => setTab('youtube')}>
-            YouTube
+            {t('youtube')}
             {!youtubeLoading && !youtubeError && (
               <span className="ml-1 text-[10px] text-gray-400">({youtubePosts.length})</span>
             )}
@@ -186,7 +189,7 @@ export default function LiveMentions({ product }) {
                     ? 'bg-brand-500 border-brand-500 text-white'
                     : 'bg-white border-gray-200 text-gray-500'
                 }`}>
-                {s.label}
+                {t(s.labelKey)}
               </button>
             ))}
           </div>
@@ -200,7 +203,7 @@ export default function LiveMentions({ product }) {
                     ? 'bg-brand-500 border-brand-500 text-white'
                     : 'bg-white border-gray-200 text-gray-500'
                 }`}>
-                {s.label}
+                {t(s.labelKey)}
               </button>
             ))}
           </div>
@@ -226,13 +229,13 @@ export default function LiveMentions({ product }) {
           <div className="px-5 py-6 text-center">
             <p className="text-sm text-gray-400">
               {error.includes('YOUTUBE_API_KEY')
-                ? 'Add your YouTube API key to .env to see videos.'
-                : `Could not load results: ${error}`}
+                ? t('addYouTubeKey')
+                : `${t('couldNotLoad')} ${error}`}
             </p>
           </div>
         ) : items.length === 0 ? (
           <div className="px-5 py-6 text-center">
-            <p className="text-sm text-gray-400">No results found.</p>
+            <p className="text-sm text-gray-400">{t('noResults')}</p>
           </div>
         ) : (
           <div className="divide-y divide-gray-50">
