@@ -1,10 +1,18 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { supabase, mapProduct } from '../lib/supabase'
 
 export function useProducts(filters, query) {
   const [rawProducts, setRawProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [refreshKey, setRefreshKey] = useState(0)
+
+  // Re-fetch when the page becomes visible again (e.g. navigating back)
+  useEffect(() => {
+    function handleFocus() { setRefreshKey(k => k + 1) }
+    window.addEventListener('focus', handleFocus)
+    return () => window.removeEventListener('focus', handleFocus)
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -46,7 +54,7 @@ export function useProducts(filters, query) {
 
     fetch()
     return () => { cancelled = true }
-  }, [filters.categories, filters.tiers, filters.maxPrice, filters.recallOnly])
+  }, [filters.categories, filters.tiers, filters.maxPrice, filters.recallOnly, refreshKey])
 
   // Client-side filters that are harder to express as Supabase queries
   const products = useMemo(() => {
