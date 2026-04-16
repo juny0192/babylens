@@ -89,6 +89,13 @@ export default function Home() {
       {/* Results */}
       <div className="px-4 py-4">
         {!loading && (
+          <>
+          <div className="flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-xl px-3 py-2 mb-3">
+            <span className="text-sm flex-shrink-0">ℹ️</span>
+            <p className="text-[11px] text-blue-600 leading-snug">
+              Rankings are based on total community mentions, not product quality. A higher rank means more people are talking about it.
+            </p>
+          </div>
           <div className="flex items-center justify-between mb-3">
             <p className="text-xs text-gray-400 font-medium">
               {products.length === totalCount
@@ -97,6 +104,7 @@ export default function Home() {
               {' · '}{t('rankedByMentions')}
             </p>
           </div>
+          </>
         )}
 
         {error && (
