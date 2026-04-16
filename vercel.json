@@ -4,5 +4,11 @@
   "outputDirectory": "dist",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "crons": [
+    {
+      "path": "/api/notify-product-updates",
+      "schedule": "0 9 * * *"
+    }
   ]
 }
