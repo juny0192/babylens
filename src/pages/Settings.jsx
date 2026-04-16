@@ -9,7 +9,7 @@ const APP_VERSION = '0.1.0'
 export default function Settings() {
   const navigate = useNavigate()
   const { user } = useAuth()
-  const { lang, setLang, t } = useLanguage()
+  const { t } = useLanguage()
 
   const [emailNotif, setEmailNotif] = useState(false)
   const [notifStatus, setNotifStatus] = useState(null) // 'saved' | null
@@ -59,25 +59,6 @@ export default function Settings() {
       </div>
 
       <div className="px-4 py-5 space-y-5">
-        {/* Language */}
-        <div className={cardClass}>
-          <h2 className="text-sm font-bold text-gray-800 mb-3">{t('language')}</h2>
-          <div className="flex gap-2">
-            <button onClick={() => setLang('en')}
-              className={`flex-1 py-3 rounded-xl text-sm font-semibold border transition-colors ${
-                lang === 'en' ? 'bg-brand-500 text-white border-brand-500' : 'bg-white text-gray-600 border-gray-200'
-              }`}>
-              {t('english')}
-            </button>
-            <button onClick={() => setLang('ko')}
-              className={`flex-1 py-3 rounded-xl text-sm font-semibold border transition-colors ${
-                lang === 'ko' ? 'bg-brand-500 text-white border-brand-500' : 'bg-white text-gray-600 border-gray-200'
-              }`}>
-              {t('korean')}
-            </button>
-          </div>
-        </div>
-
         {/* Notifications */}
         <div className={cardClass}>
           <h2 className="text-sm font-bold text-gray-800 mb-3">{t('notifications')}</h2>

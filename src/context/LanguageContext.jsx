@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useEffect } from 'react'
 
 const translations = {
   en: {
@@ -332,18 +332,16 @@ const TIER_KEY_MAP = {
 const LanguageContext = createContext(null)
 
 export function LanguageProvider({ children }) {
-  const [lang, setLangState] = useState(() => {
-    return localStorage.getItem('babylens_language') || 'en'
-  })
+  // Language toggle removed — app is English only.
+  const lang = 'en'
 
   useEffect(() => {
-    localStorage.setItem('babylens_language', lang)
-    document.documentElement.lang = lang
-  }, [lang])
+    document.documentElement.lang = 'en'
+    // Clean up any previously-saved language preference
+    localStorage.removeItem('babylens_language')
+  }, [])
 
-  function setLang(next) {
-    setLangState(next)
-  }
+  function setLang() { /* no-op */ }
 
   function t(key, vars) {
     let str = translations[lang]?.[key] ?? translations.en[key] ?? key
