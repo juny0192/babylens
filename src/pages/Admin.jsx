@@ -212,10 +212,10 @@ export default function Admin() {
       best_for: formData.best_for.trim(),
       recall: formData.recall,
       recall_details: formData.recall ? formData.recall_details : null,
-      updated_at: new Date().toISOString(),
     }
     const { error } = await supabase.from('products').upsert(row)
     if (error) {
+      console.error('Save error:', error)
       setSaveStatus('error')
     } else {
       setSaveStatus('success')
@@ -292,7 +292,6 @@ export default function Admin() {
         best_for: p.best_for,
         recall: p.recall || false,
         recall_details: p.recall_details || null,
-        updated_at: new Date().toISOString(),
       }
       const { error } = await supabase.from('products').upsert(row)
       if (error) fail++
