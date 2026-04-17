@@ -18,26 +18,26 @@ export default async function handler(req, res) {
     })
     if (sort === 'top') params.set('t', t)
 
+    const headers = {
+      'User-Agent': 'Mozilla/5.0 (compatible; BabyLens/1.0; +https://babylens.vercel.app)',
+      'Accept': 'application/json',
+    }
+
+    // Try subreddit-specific search first
     const url = `https://www.reddit.com/r/${BABY_SUBREDDITS}/search.json?${params.toString()}`
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'BabyLens/1.0 (product review aggregator)',
-        'Accept': 'application/json',
-      }
-    })
+    const response = await fetch(url, { headers })
 
-    if (!response.ok) throw new Error(`Reddit API error: ${response.status}`)
+    let posts = []
+    if (response.ok) {
+      const json = await response.json()
+      posts = (json?.data?.children || []).map(mapPost)
+    }
 
-    const json = await response.json()
-    let posts = (json?.data?.children || []).map(mapPost)
-
-    // Fallback: broader search if no results
+    // Fallback: broader search across all Reddit
     if (posts.length === 0) {
       const fbParams = new URLSearchParams({ q: `${q} baby`, sort, limit, type: 'link' })
       if (sort === 'top') fbParams.set('t', t)
-      const fbRes = await fetch(`https://www.reddit.com/search.json?${fbParams.toString()}`, {
-        headers: { 'User-Agent': 'BabyLens/1.0', 'Accept': 'application/json' }
-      })
+      const fbRes = await fetch(`https://www.reddit.com/search.json?${fbParams.toString()}`, { headers })
       if (fbRes.ok) {
         const fbJson = await fbRes.json()
         posts = (fbJson?.data?.children || []).map(mapPost)
@@ -52,7 +52,8 @@ export default async function handler(req, res) {
 
     res.status(200).json({ posts })
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    console.error('Reddit search error:', err.message)
+    res.status(200).json({ posts: [], error: err.message })
   }
 }
 
