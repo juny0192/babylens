@@ -225,12 +225,28 @@ export default function LiveMentions({ product }) {
               </div>
             ))}
           </div>
+        ) : error && tab === 'reddit' ? (
+          <div className="px-5 py-8 text-center">
+            <span className="text-3xl mb-3 block">🕐</span>
+            <p className="text-sm font-semibold text-gray-600">Reddit mentions coming soon</p>
+            <p className="text-xs text-gray-400 mt-1 max-w-xs mx-auto">
+              Reddit API access is pending approval. Check back soon!
+            </p>
+          </div>
         ) : error ? (
           <div className="px-5 py-6 text-center">
             <p className="text-sm text-gray-400">
               {error.includes('YOUTUBE_API_KEY')
                 ? t('addYouTubeKey')
                 : `${t('couldNotLoad')} ${error}`}
+            </p>
+          </div>
+        ) : items.length === 0 && tab === 'reddit' ? (
+          <div className="px-5 py-8 text-center">
+            <span className="text-3xl mb-3 block">🕐</span>
+            <p className="text-sm font-semibold text-gray-600">Reddit mentions coming soon</p>
+            <p className="text-xs text-gray-400 mt-1 max-w-xs mx-auto">
+              Reddit API access is pending approval. Check back soon!
             </p>
           </div>
         ) : items.length === 0 ? (
