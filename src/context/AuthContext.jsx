@@ -45,6 +45,13 @@ export function AuthProvider({ children }) {
     return { error }
   }
 
+  async function resetPassword(email) {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth?reset=true`,
+    })
+    return { error }
+  }
+
   async function deleteAccount() {
     const { error } = await supabase.rpc('delete_user')
     if (!error) await supabase.auth.signOut()
@@ -52,7 +59,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, signUp, signIn, signOut, updatePassword, deleteAccount }}>
+    <AuthContext.Provider value={{ user, loading, signUp, signIn, signOut, updatePassword, resetPassword, deleteAccount }}>
       {children}
     </AuthContext.Provider>
   )
