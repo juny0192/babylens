@@ -114,10 +114,6 @@ export default function Account() {
               </p>
             </div>
             <div className="flex flex-col gap-1.5 flex-shrink-0">
-              <button onClick={() => navigate('/settings')}
-                className="text-xs font-semibold text-gray-600 border border-gray-200 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors">
-                {t('settings')}
-              </button>
               <button onClick={() => { setShowPwModal(true); setPwNew(''); setPwConfirm(''); setPwStatus(null) }}
                 className="text-xs font-semibold text-brand-500 border border-brand-200 px-3 py-1.5 rounded-lg hover:bg-brand-50 transition-colors">
                 {t('changePassword')}
