@@ -3,6 +3,7 @@
 // with email notifications enabled, and sends a digest email via Resend.
 
 import { createClient } from '@supabase/supabase-js'
+import { logUsage } from './_usage.js'
 
 const supabaseAdmin = createClient(
   process.env.VITE_SUPABASE_URL,
@@ -143,6 +144,7 @@ export default async function handler(req, res) {
 
         if (sendRes.ok) {
           emailsSent++
+          logUsage('resend', 1, 0, { endpoint: 'notify-product-updates', products: products.length })
         } else {
           const errData = await sendRes.json().catch(() => ({}))
           errors.push({ email, error: errData?.message || sendRes.status })

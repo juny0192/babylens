@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
+import { logUsage, estimateAnthropicCost } from './_usage.js'
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -57,6 +58,8 @@ Guidelines:
       system: SYSTEM_PROMPT,
       messages: [{ role: 'user', content: userPrompt }],
     })
+
+    logUsage('anthropic', (message.usage?.input_tokens || 0) + (message.usage?.output_tokens || 0), estimateAnthropicCost(message.usage), { endpoint: 'generate-product', model: 'claude-opus-4-5' })
 
     const raw = message.content[0].text.trim()
     // Strip markdown fences if model wraps output

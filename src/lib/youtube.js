@@ -12,6 +12,13 @@ export async function searchYouTube(productName, brand, { limit = 10, order = 'd
     throw new Error(err?.error?.message || `YouTube API error: ${res.status}`)
   }
 
+  // Fire-and-forget usage log: each search.list call costs 100 quota units
+  fetch('/api/log-usage', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ service: 'youtube', units: 100, metadata: { query, order } }),
+  }).catch(() => {})
+
   const json = await res.json()
   return json.items.map((item) => ({
     title: item.snippet.title,

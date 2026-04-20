@@ -1,3 +1,5 @@
+import { logUsage } from './_usage.js'
+
 export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' })
 
@@ -18,6 +20,7 @@ export default async function handler(req, res) {
     }
     const data = await r.json()
     const imageUrl = data.images_results?.[0]?.thumbnail || data.images_results?.[0]?.original || null
+    logUsage('serpapi', 1, 0, { q })
     res.status(200).json({ imageUrl })
   } catch (err) {
     res.status(500).json({ error: err.message })

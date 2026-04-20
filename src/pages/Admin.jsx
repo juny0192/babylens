@@ -56,8 +56,13 @@ export default function Admin() {
   const [usersLoading, setUsersLoading] = useState(false)
   const [usersError, setUsersError] = useState(null)
 
+  // --- Service Usage state ---
+  const [usageRows, setUsageRows] = useState([])
+  const [usageLoading, setUsageLoading] = useState(false)
+  const [usageError, setUsageError] = useState(null)
+
   // --- Bulk Generate state ---
-  const [activeTab, setActiveTab] = useState('single') // 'single' | 'bulk' | 'users'
+  const [activeTab, setActiveTab] = useState('single') // 'single' | 'bulk' | 'users' | 'usage'
   const [bulkCategory, setBulkCategory] = useState('All')
   const [bulkTier, setBulkTier] = useState('All')
   const [bulkLoading, setBulkLoading] = useState(false)
@@ -109,6 +114,29 @@ export default function Admin() {
   }, [])
 
   useEffect(() => { if (unlocked && activeTab === 'users') loadUsers() }, [unlocked, activeTab, loadUsers])
+
+  // --- Usage ---
+  const loadUsage = useCallback(async () => {
+    setUsageLoading(true)
+    setUsageError(null)
+    try {
+      // Pull last 35 days — enough for monthly aggregates
+      const since = new Date(Date.now() - 35 * 24 * 60 * 60 * 1000).toISOString()
+      const { data, error } = await supabase
+        .from('service_usage')
+        .select('service, units, cost_usd, created_at')
+        .gte('created_at', since)
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      setUsageRows(data || [])
+    } catch (err) {
+      setUsageError(err.message)
+    } finally {
+      setUsageLoading(false)
+    }
+  }, [])
+
+  useEffect(() => { if (unlocked && activeTab === 'usage') loadUsage() }, [unlocked, activeTab, loadUsage])
 
   // --- Auto-sum mentions ---
   function recalcMentions(sources) {
@@ -391,9 +419,9 @@ export default function Admin() {
 
         {/* Tab bar */}
         <div className="flex bg-white border border-gray-100 rounded-2xl p-1 shadow-sm">
-          {[['single', 'Add Product'], ['bulk', 'Bulk Generate'], ['users', 'Users']].map(([key, label]) => (
+          {[['single', 'Add Product'], ['bulk', 'Bulk'], ['users', 'Users'], ['usage', 'Used Service']].map(([key, label]) => (
             <button key={key} onClick={() => setActiveTab(key)}
-              className={`flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all ${
+              className={`flex-1 py-2.5 text-xs font-semibold rounded-xl transition-all ${
                 activeTab === key
                   ? 'bg-brand-500 text-white shadow-sm'
                   : 'text-gray-400 hover:text-gray-600'
@@ -565,6 +593,11 @@ export default function Admin() {
               </div>
             )}
           </div>
+        )}
+
+        {/* Used Service tab */}
+        {activeTab === 'usage' && (
+          <UsageView rows={usageRows} loading={usageLoading} error={usageError} onRefresh={loadUsage} />
         )}
 
         {/* Single product tab */}
@@ -820,8 +853,8 @@ export default function Admin() {
         </>
         )}
 
-        {/* Existing products — hidden on Users tab */}
-        {activeTab !== 'users' && <div className={cardClass}>
+        {/* Existing products — hidden on Users + Usage tabs */}
+        {activeTab !== 'users' && activeTab !== 'usage' && <div className={cardClass}>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-bold text-gray-800">
               Existing Products
@@ -880,6 +913,127 @@ export default function Admin() {
           )}
         </div>}
       </div>
+    </div>
+  )
+}
+
+// --- Usage view ---
+// Reset periods:
+//   day   = since local midnight today
+//   month = since 1st of this calendar month
+//   all   = cumulative (no reset)
+const SERVICE_LIMITS = [
+  { key: 'serpapi',   label: 'SerpAPI',   icon: '🔍', period: 'month', limit: 100,    unitLabel: 'searches', resetText: 'Resets 1st of month' },
+  { key: 'resend',    label: 'Resend',    icon: '📧', period: 'day',   limit: 100,    unitLabel: 'emails',   resetText: 'Resets daily · 3,000/mo cap', altPeriod: 'month', altLimit: 3000 },
+  { key: 'youtube',   label: 'YouTube',   icon: '▶️',  period: 'day',   limit: 10000,  unitLabel: 'units',    resetText: 'Resets midnight Pacific · 100/search' },
+  { key: 'anthropic', label: 'Anthropic', icon: '🤖', period: 'all',   limit: null,   unitLabel: 'tokens',   resetText: 'Pay-as-you-go · no reset', isCost: true },
+  { key: 'reddit',    label: 'Reddit',    icon: '🗨️',  period: 'all',   limit: null,   unitLabel: '',         resetText: 'API access pending approval', isPending: true },
+]
+
+function periodStart(period) {
+  const now = new Date()
+  if (period === 'day') return new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  if (period === 'month') return new Date(now.getFullYear(), now.getMonth(), 1)
+  return new Date(0)
+}
+
+function sumInPeriod(rows, service, period, field = 'units') {
+  const start = periodStart(period).getTime()
+  return rows
+    .filter(r => r.service === service && new Date(r.created_at).getTime() >= start)
+    .reduce((sum, r) => sum + Number(r[field] || 0), 0)
+}
+
+function UsageView({ rows, loading, error, onRefresh }) {
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between px-1">
+        <div>
+          <h2 className="text-sm font-bold text-gray-800">API Service Usage</h2>
+          <p className="text-xs text-gray-400 mt-0.5">Logged per call · auto-resets on schedule</p>
+        </div>
+        <button onClick={onRefresh} className="text-xs text-brand-500 font-semibold">Refresh</button>
+      </div>
+
+      {error && (
+        <div className="bg-red-50 border border-red-100 rounded-2xl p-4 text-xs text-red-600">{error}</div>
+      )}
+
+      {loading ? (
+        <div className="space-y-3">
+          {[...Array(5)].map((_, i) => <div key={i} className="h-24 bg-white rounded-2xl animate-pulse border border-gray-100" />)}
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {SERVICE_LIMITS.map(s => {
+            if (s.isPending) {
+              return (
+                <div key={s.key} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">{s.icon}</span>
+                    <div className="flex-1">
+                      <p className="text-sm font-bold text-gray-800">{s.label}</p>
+                      <p className="text-[11px] text-amber-600 font-semibold mt-0.5">⏳ {s.resetText}</p>
+                    </div>
+                  </div>
+                </div>
+              )
+            }
+            if (s.isCost) {
+              const totalCost = sumInPeriod(rows, s.key, s.period, 'cost_usd')
+              const totalTokens = sumInPeriod(rows, s.key, s.period, 'units')
+              return (
+                <div key={s.key} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-2xl">{s.icon}</span>
+                    <div className="flex-1">
+                      <p className="text-sm font-bold text-gray-800">{s.label}</p>
+                      <p className="text-[11px] text-gray-400">{s.resetText}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-brand-500">${totalCost.toFixed(4)}</p>
+                      <p className="text-[10px] text-gray-400">{totalTokens.toLocaleString()} tokens</p>
+                    </div>
+                  </div>
+                </div>
+              )
+            }
+            const used = sumInPeriod(rows, s.key, s.period)
+            const pct = s.limit ? Math.min(100, (used / s.limit) * 100) : 0
+            const remaining = s.limit ? Math.max(0, s.limit - used) : null
+            const barColor = pct > 90 ? 'bg-red-500' : pct > 70 ? 'bg-amber-500' : 'bg-emerald-500'
+            const altUsed = s.altPeriod ? sumInPeriod(rows, s.key, s.altPeriod) : null
+            return (
+              <div key={s.key} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-2xl">{s.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-gray-800">{s.label}</p>
+                    <p className="text-[11px] text-gray-400">{s.resetText}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-lg font-bold text-brand-500">{remaining?.toLocaleString()}</p>
+                    <p className="text-[10px] text-gray-400">left today</p>
+                  </div>
+                </div>
+                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className={`h-full ${barColor} transition-all`} style={{ width: `${pct}%` }} />
+                </div>
+                <div className="flex justify-between mt-1.5">
+                  <span className="text-[11px] text-gray-500 font-semibold">{used.toLocaleString()} / {s.limit.toLocaleString()} {s.unitLabel}</span>
+                  {altUsed !== null && (
+                    <span className="text-[11px] text-gray-400">{altUsed.toLocaleString()} / {s.altLimit.toLocaleString()} this month</span>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      <p className="text-[11px] text-gray-400 text-center pt-2">
+        Usage is logged from the moment tracking was deployed. Older calls are not counted.
+      </p>
     </div>
   )
 }

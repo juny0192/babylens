@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
+import { logUsage, estimateAnthropicCost } from './_usage.js'
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -62,6 +63,8 @@ Guidelines:
       messages: [{ role: 'user', content: userPrompt }],
     })
 
+    logUsage('anthropic', (message.usage?.input_tokens || 0) + (message.usage?.output_tokens || 0), estimateAnthropicCost(message.usage), { endpoint: 'bulk-generate', model: 'claude-opus-4-5' })
+
     const raw = message.content[0].text.trim()
     const cleaned = raw
       .replace(/^```json\s*/i, '')
@@ -98,6 +101,7 @@ Guidelines:
             const d = await r.json()
             const img = d.images_results?.[0]?.thumbnail || d.images_results?.[0]?.original
             if (img) p.image_url = img
+            logUsage('serpapi', 1, 0, { endpoint: 'bulk-generate', q: `${p.brand} ${p.name}` })
           }
         } catch {}
       }))
