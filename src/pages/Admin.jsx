@@ -945,6 +945,26 @@ function sumInPeriod(rows, service, period, field = 'units') {
 }
 
 function UsageView({ rows, loading, error, onRefresh }) {
+  const [startingBalance, setStartingBalance] = useState(() => {
+    const v = localStorage.getItem('babylens_anthropic_starting_balance')
+    return v ? Number(v) : 0
+  })
+  const [balanceDate, setBalanceDate] = useState(() => localStorage.getItem('babylens_anthropic_balance_date') || '')
+  const [editingBalance, setEditingBalance] = useState(false)
+  const [balanceDraft, setBalanceDraft] = useState(String(startingBalance || ''))
+
+  function saveBalance() {
+    const n = Number(balanceDraft)
+    if (!isNaN(n)) {
+      setStartingBalance(n)
+      const today = new Date().toISOString().slice(0, 10)
+      setBalanceDate(today)
+      localStorage.setItem('babylens_anthropic_starting_balance', String(n))
+      localStorage.setItem('babylens_anthropic_balance_date', today)
+    }
+    setEditingBalance(false)
+  }
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between px-1">
@@ -980,20 +1000,75 @@ function UsageView({ rows, loading, error, onRefresh }) {
               )
             }
             if (s.isCost) {
-              const totalCost = sumInPeriod(rows, s.key, s.period, 'cost_usd')
-              const totalTokens = sumInPeriod(rows, s.key, s.period, 'units')
+              // Only count spend since the starting-balance date was set
+              const since = balanceDate ? new Date(balanceDate).getTime() : 0
+              const scopedRows = rows.filter(r => new Date(r.created_at).getTime() >= since)
+              const totalCost = scopedRows.filter(r => r.service === s.key).reduce((sum, r) => sum + Number(r.cost_usd || 0), 0)
+              const totalTokens = scopedRows.filter(r => r.service === s.key).reduce((sum, r) => sum + Number(r.units || 0), 0)
+              const remaining = startingBalance > 0 ? Math.max(0, startingBalance - totalCost) : null
+              const pct = startingBalance > 0 ? Math.min(100, (totalCost / startingBalance) * 100) : 0
+              const barColor = pct > 90 ? 'bg-red-500' : pct > 70 ? 'bg-amber-500' : 'bg-emerald-500'
               return (
                 <div key={s.key} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="text-2xl">{s.icon}</span>
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold text-gray-800">{s.label}</p>
                       <p className="text-[11px] text-gray-400">{s.resetText}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-bold text-brand-500">${totalCost.toFixed(4)}</p>
-                      <p className="text-[10px] text-gray-400">{totalTokens.toLocaleString()} tokens</p>
+                      {remaining !== null ? (
+                        <>
+                          <p className="text-lg font-bold text-brand-500">${remaining.toFixed(2)}</p>
+                          <p className="text-[10px] text-gray-400">left</p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-lg font-bold text-brand-500">${totalCost.toFixed(4)}</p>
+                          <p className="text-[10px] text-gray-400">spent</p>
+                        </>
+                      )}
                     </div>
+                  </div>
+                  {startingBalance > 0 && (
+                    <>
+                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div className={`h-full ${barColor} transition-all`} style={{ width: `${pct}%` }} />
+                      </div>
+                      <div className="flex justify-between mt-1.5">
+                        <span className="text-[11px] text-gray-500 font-semibold">${totalCost.toFixed(4)} / ${startingBalance.toFixed(2)} used</span>
+                        <span className="text-[11px] text-gray-400">{totalTokens.toLocaleString()} tokens</span>
+                      </div>
+                    </>
+                  )}
+                  <div className="mt-3 pt-3 border-t border-gray-50 flex items-center justify-between gap-2">
+                    {editingBalance ? (
+                      <>
+                        <div className="flex items-center gap-1.5 flex-1">
+                          <span className="text-xs text-gray-500">$</span>
+                          <input
+                            type="number" step="0.01" min="0" autoFocus
+                            value={balanceDraft}
+                            onChange={e => setBalanceDraft(e.target.value)}
+                            className="flex-1 border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-brand-400"
+                            placeholder="9.37"
+                          />
+                        </div>
+                        <button onClick={saveBalance} className="text-xs font-semibold text-brand-500 px-2">Save</button>
+                        <button onClick={() => { setEditingBalance(false); setBalanceDraft(String(startingBalance || '')) }}
+                          className="text-xs text-gray-400 px-1">Cancel</button>
+                      </>
+                    ) : (
+                      <>
+                        <div className="text-[11px] text-gray-400">
+                          {startingBalance > 0
+                            ? <>Balance set {balanceDate} · <button onClick={() => setEditingBalance(true)} className="text-brand-500 font-semibold">Update</button></>
+                            : <button onClick={() => setEditingBalance(true)} className="text-brand-500 font-semibold">+ Set starting balance</button>}
+                        </div>
+                        <a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener noreferrer"
+                          className="text-[11px] text-brand-500 font-semibold hover:underline">Console ↗</a>
+                      </>
+                    )}
                   </div>
                 </div>
               )
