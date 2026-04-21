@@ -118,8 +118,8 @@ const translations = {
     emailNotificationsDesc: 'Get notified when products you saved have updates, recalls, or price changes.',
     loginToEnableNotifications: 'Log in to enable notifications',
     notificationsSaved: 'Saved',
-    aboutText: 'BabyLens helps parents find the best baby products by aggregating reviews and mentions from Reddit, YouTube, BabyGearLab, Consumer Reports, and more — all in one place.',
-    disclaimerText: 'BabyLens aggregates publicly available reviews and mentions. We are not affiliated with any brand. Product recalls shown are from public sources and may not be exhaustive — always check the manufacturer\'s website for the latest safety information. Prices and ratings are approximations.',
+    aboutText: 'Herdlee helps parents find the best baby products by aggregating reviews and mentions from Reddit, YouTube, BabyGearLab, Consumer Reports, and more — all in one place.',
+    disclaimerText: 'Herdlee aggregates publicly available reviews and mentions. We are not affiliated with any brand. Product recalls shown are from public sources and may not be exhaustive — always check the manufacturer\'s website for the latest safety information. Prices and ratings are approximations.',
     // Categories
     cat_Strollers: 'Strollers',
     cat_CarSeats: 'Car Seats',
@@ -265,8 +265,8 @@ const translations = {
     emailNotificationsDesc: '저장한 제품의 업데이트, 리콜 또는 가격 변동 시 알림을 받습니다.',
     loginToEnableNotifications: '알림을 활성화하려면 로그인하세요',
     notificationsSaved: '저장됨',
-    aboutText: 'BabyLens는 Reddit, YouTube, BabyGearLab, Consumer Reports 등의 리뷰와 언급을 한곳에 모아 부모님들이 최고의 유아 제품을 찾을 수 있도록 도와드립니다.',
-    disclaimerText: 'BabyLens는 공개적으로 이용 가능한 리뷰와 언급을 집계합니다. 저희는 어떤 브랜드와도 제휴 관계가 아닙니다. 표시된 제품 리콜은 공개 출처에서 가져온 것이며 완전하지 않을 수 있습니다. 최신 안전 정보는 항상 제조업체 웹사이트에서 확인하세요. 가격 및 평점은 근사치입니다.',
+    aboutText: 'Herdlee는 Reddit, YouTube, BabyGearLab, Consumer Reports 등의 리뷰와 언급을 한곳에 모아 부모님들이 최고의 유아 제품을 찾을 수 있도록 도와드립니다.',
+    disclaimerText: 'Herdlee는 공개적으로 이용 가능한 리뷰와 언급을 집계합니다. 저희는 어떤 브랜드와도 제휴 관계가 아닙니다. 표시된 제품 리콜은 공개 출처에서 가져온 것이며 완전하지 않을 수 있습니다. 최신 안전 정보는 항상 제조업체 웹사이트에서 확인하세요. 가격 및 평점은 근사치입니다.',
     // Categories
     cat_Strollers: '유모차',
     cat_CarSeats: '카시트',
