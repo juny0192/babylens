@@ -14,6 +14,23 @@ export default async function handler(req, res) {
 
   const { category, priceTier, existingProducts = [] } = req.body || {}
 
+  const CATEGORY_SCOPE = {
+    'Strollers': 'full-size strollers, lightweight strollers, jogging strollers, umbrella strollers, double strollers. NOT car seats, carriers, or travel accessories.',
+    'Car Seats': 'infant car seats, convertible car seats, booster seats, all-in-one car seats. NOT strollers, travel systems, or carriers.',
+    'Carriers': 'baby carriers, wraps, ring slings, soft-structured carriers, mei tais. NOT strollers, car seats, or backpacks.',
+    'Feeding': 'breast pumps, bottles, bottle warmers, formula dispensers, high chairs, bibs, nursing pillows, sippy cups, baby food makers. NOT monitors or general kitchen items.',
+    'Monitors': 'video baby monitors, audio monitors, movement monitors, breathing monitors, smart monitors. NOT cameras or general electronics.',
+    'Nursery & Sleep': 'cribs, bassinets, pack-n-plays, swings, bouncers, sleep sacks, swaddles, white noise machines, changing tables, dressers. NOT monitors or strollers.',
+    'Gear & Travel': 'diaper bags, travel cribs, baby backpacks, bouncers for travel, baby carriers for hiking, stroller accessories, baby gates, high chair boosters for travel. NOT full-size strollers (those go in Strollers), NOT car seats (those go in Car Seats).',
+    'Toys & Play': 'activity gyms, play mats, sensory toys, rattles, teethers, educational toys, building blocks, musical toys. NOT monitors, feeding items, or safety gear.',
+    'Bath & Potty': 'baby bathtubs, bath seats, bath toys, potty training seats, baby wash, bath thermometers. NOT health monitors or general toiletries.',
+    'Health & Safety': 'baby thermometers, nasal aspirators, baby gates, outlet covers, cabinet locks, first aid kits, humidifiers, nail clippers. NOT monitors, bath items, or feeding.',
+  }
+
+  const scopeNote = category && category !== 'All' && CATEGORY_SCOPE[category]
+    ? `\nCategory scope for "${category}": ${CATEGORY_SCOPE[category]}`
+    : ''
+
   const categoryFilter = category && category !== 'All' ? `in the "${category}" category` : 'across any baby product category (Strollers, Car Seats, Carriers, Feeding, Monitors, Nursery & Sleep, Gear & Travel, Toys & Play, Bath & Potty, Health & Safety)'
   const tierFilter = priceTier && priceTier !== 'All' ? `All products must be ${priceTier} tier.` : 'Mix of Budget, Mid, and Premium tiers.'
 
@@ -23,6 +40,7 @@ export default async function handler(req, res) {
 
   const userPrompt = `Generate a list of 10 real, well-known baby products ${categoryFilter}.
 ${tierFilter}
+${scopeNote}
 ${exclusionBlock}
 Return a JSON array of 10 objects. Each object must have exactly these fields:
 
