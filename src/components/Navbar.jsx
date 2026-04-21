@@ -37,8 +37,8 @@ export default function Navbar() {
             {/* Highlight spot */}
             <circle cx="13" cy="13" r="2.8" fill="#DFA892" opacity="0.75" />
           </svg>
-          <span className="text-2xl text-brand-500 tracking-tight" style={{ fontFamily: "'Fredoka', sans-serif", fontWeight: 700 }}>
-            Herd<span className="text-gray-700">lee</span>
+          <span className="text-2xl tracking-tight" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, color: '#1B3D3D' }}>
+            herdlee
           </span>
           <span className="text-xs bg-brand-100 text-brand-600 px-2 py-0.5 rounded-full font-medium">{t('beta')}</span>
         </button>
