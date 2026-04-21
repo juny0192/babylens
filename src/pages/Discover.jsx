@@ -82,18 +82,18 @@ const CATEGORY_SVG = {
   ),
 }
 
-// Subtle two-tone palette using the app's new mint/peach theme
+// Border color per category (left accent + full border)
 const CATEGORY_STYLE = {
-  Strollers:        { bg: 'bg-brand-100',  icon: 'text-brand-600' },
-  'Car Seats':      { bg: 'bg-blush-100',  icon: 'text-rose-500' },
-  Carriers:         { bg: 'bg-brand-100',  icon: 'text-brand-600' },
-  Feeding:          { bg: 'bg-peach-100',  icon: 'text-orange-400' },
-  Monitors:         { bg: 'bg-brand-100',  icon: 'text-brand-600' },
-  'Nursery & Sleep':{ bg: 'bg-blush-100',  icon: 'text-rose-400' },
-  'Gear & Travel':  { bg: 'bg-peach-100',  icon: 'text-orange-400' },
-  'Toys & Play':    { bg: 'bg-brand-100',  icon: 'text-brand-600' },
-  'Bath & Potty':   { bg: 'bg-peach-100',  icon: 'text-orange-400' },
-  'Health & Safety':{ bg: 'bg-blush-100',  icon: 'text-rose-500' },
+  Strollers:        { border: 'border-brand-400',  icon: 'text-brand-500',  left: 'bg-brand-400' },
+  'Car Seats':      { border: 'border-blush-200',  icon: 'text-rose-400',   left: 'bg-blush-200' },
+  Carriers:         { border: 'border-brand-400',  icon: 'text-brand-500',  left: 'bg-brand-400' },
+  Feeding:          { border: 'border-peach-200',  icon: 'text-orange-400', left: 'bg-peach-200' },
+  Monitors:         { border: 'border-brand-400',  icon: 'text-brand-500',  left: 'bg-brand-400' },
+  'Nursery & Sleep':{ border: 'border-blush-200',  icon: 'text-rose-400',   left: 'bg-blush-200' },
+  'Gear & Travel':  { border: 'border-peach-200',  icon: 'text-orange-400', left: 'bg-peach-200' },
+  'Toys & Play':    { border: 'border-brand-400',  icon: 'text-brand-500',  left: 'bg-brand-400' },
+  'Bath & Potty':   { border: 'border-peach-200',  icon: 'text-orange-400', left: 'bg-peach-200' },
+  'Health & Safety':{ border: 'border-blush-200',  icon: 'text-rose-400',   left: 'bg-blush-200' },
 }
 
 export default function Discover() {
@@ -128,13 +128,15 @@ export default function Discover() {
           <h2 className="text-sm font-bold text-gray-800 mb-3">{t('browseByCategory')}</h2>
           <div className="grid grid-cols-2 gap-3">
             {CATEGORIES.map((cat) => {
-              const style = CATEGORY_STYLE[cat] || { bg: 'bg-brand-100', icon: 'text-brand-600' }
+              const style = CATEGORY_STYLE[cat] || { border: 'border-brand-400', icon: 'text-brand-500', left: 'bg-brand-400' }
               return (
                 <button
                   key={cat}
                   onClick={() => navigate(`/?category=${encodeURIComponent(cat)}`)}
-                  className={`${style.bg} rounded-2xl p-4 text-left active:scale-95 transition-transform`}
+                  className={`relative bg-white border ${style.border} rounded-2xl p-4 pl-5 text-left active:scale-95 transition-transform overflow-hidden`}
                 >
+                  {/* Left accent bar */}
+                  <span className={`absolute left-0 top-0 bottom-0 w-1 ${style.left} rounded-l-2xl`} />
                   <span className={`${style.icon} block mb-2.5`}>{CATEGORY_SVG[cat]}</span>
                   <p className="text-sm font-bold text-gray-800">{tCategory(cat)}</p>
                   <p className="text-xs text-gray-500 mt-0.5">{tCategoryDesc(cat)}</p>
@@ -148,7 +150,7 @@ export default function Discover() {
         <section>
           <div className="flex items-center gap-2 mb-3">
             <h2 className="text-sm font-bold text-gray-800">{t('trendingNow')}</h2>
-            <span className="text-xs bg-brand-100 text-brand-600 px-2 py-0.5 rounded-full font-semibold">{t('top4')}</span>
+            <span className="text-xs text-gray-400 font-medium border-l-2 border-brand-400 pl-2">Top 4</span>
           </div>
           {loading ? (
             <div className="space-y-3">
