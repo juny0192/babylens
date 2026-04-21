@@ -89,7 +89,7 @@ export default function Home() {
       <div className="px-4 py-4">
         {!loading && (
           <>
-          <p className="text-[11px] text-gray-400 mb-3 leading-snug">
+          <p className="text-[11px] text-gray-400 mb-3 leading-snug border border-brand-400 rounded-lg px-3 py-1.5 inline-block">
             Rankings are based on total community mentions, not product quality.
           </p>
           <div className="flex items-center justify-between mb-3">
