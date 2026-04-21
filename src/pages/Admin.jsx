@@ -286,7 +286,11 @@ export default function Admin() {
       const res = await fetch('/api/bulk-generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ category: bulkCategory, priceTier: bulkTier }),
+        body: JSON.stringify({
+          category: bulkCategory,
+          priceTier: bulkTier,
+          existingProducts: products.map(p => ({ name: p.name, brand: p.brand })),
+        }),
       })
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))

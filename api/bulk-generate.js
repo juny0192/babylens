@@ -12,14 +12,18 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { category, priceTier } = req.body || {}
+  const { category, priceTier, existingProducts = [] } = req.body || {}
 
   const categoryFilter = category && category !== 'All' ? `in the "${category}" category` : 'across any baby product category (Strollers, Car Seats, Carriers, Feeding, Monitors, Nursery & Sleep, Gear & Travel, Toys & Play, Bath & Potty, Health & Safety)'
   const tierFilter = priceTier && priceTier !== 'All' ? `All products must be ${priceTier} tier.` : 'Mix of Budget, Mid, and Premium tiers.'
 
+  const exclusionBlock = existingProducts.length > 0
+    ? `\nDo NOT suggest any of these products — they are already in the database:\n${existingProducts.map(p => `- ${p.brand} ${p.name}`).join('\n')}\n`
+    : ''
+
   const userPrompt = `Generate a list of 10 real, well-known baby products ${categoryFilter}.
 ${tierFilter}
-
+${exclusionBlock}
 Return a JSON array of 10 objects. Each object must have exactly these fields:
 
 {
