@@ -3,7 +3,7 @@ import { logUsage, estimateAnthropicCost } from './_usage.js'
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
-const SYSTEM_PROMPT = `You are a product data generator for BabyLens, a baby product review aggregator.
+const SYSTEM_PROMPT = `You are a product data generator for Herdlee, a baby product review aggregator.
 You respond ONLY with a valid JSON object — no markdown, no explanation, no code fences.
 All field names and values must exactly match the schema provided.`
 

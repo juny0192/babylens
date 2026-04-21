@@ -9,9 +9,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'icon.svg', 'apple-touch-icon-180x180.png'],
       manifest: {
-        name: 'BabyLens',
-        short_name: 'BabyLens',
-        description: 'Baby product review aggregator — community-ranked gear for every stage.',
+        name: 'Herdlee',
+        short_name: 'Herdlee',
+        description: 'Follow the herd. Find the best baby gear — ranked by what parents are actually saying.',
         theme_color: '#ed5e58',
         background_color: '#ffffff',
         display: 'standalone',

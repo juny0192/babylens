@@ -107,7 +107,7 @@ export default async function handler(req, res) {
 
       const htmlBody = `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
-          <h2 style="color: #ed5e58; margin-bottom: 4px;">BabyLens</h2>
+          <h2 style="color: #ed5e58; margin-bottom: 4px;">Herdlee</h2>
           <p style="color: #6b7280; font-size: 14px; margin-top: 0;">Product Update Notification</p>
           <hr style="border: none; border-top: 1px solid #f3f4f6; margin: 16px 0;" />
           <p style="color: #374151; font-size: 14px; line-height: 1.6;">
@@ -117,11 +117,11 @@ export default async function handler(req, res) {
             ${productList}
           </div>
           <p style="font-size: 14px; color: #374151;">
-            Check out the latest details on <a href="https://babylens.vercel.app" style="color: #ed5e58; text-decoration: none; font-weight: 600;">BabyLens</a>.
+            Check out the latest details on <a href="https://herdlee.vercel.app" style="color: #ed5e58; text-decoration: none; font-weight: 600;">Herdlee</a>.
           </p>
           <hr style="border: none; border-top: 1px solid #f3f4f6; margin: 24px 0 12px;" />
           <p style="font-size: 11px; color: #9ca3af;">
-            You're receiving this because you enabled notifications in BabyLens Settings.
+            You're receiving this because you enabled notifications in Herdlee Settings.
             To unsubscribe, go to Settings and turn off Email Notifications.
           </p>
         </div>
@@ -135,9 +135,9 @@ export default async function handler(req, res) {
             Authorization: `Bearer ${resendKey}`,
           },
           body: JSON.stringify({
-            from: 'BabyLens <onboarding@resend.dev>',
+            from: 'Herdlee <onboarding@resend.dev>',
             to: email,
-            subject: `BabyLens: ${products.length} saved product${products.length > 1 ? 's' : ''} updated`,
+            subject: `Herdlee: ${products.length} saved product${products.length > 1 ? 's' : ''} updated`,
             html: htmlBody,
           }),
         })

@@ -10,7 +10,7 @@ const translations = {
     login: 'Log In',
     back: 'Back',
     beta: 'beta',
-    tagline: 'The trusted baby product guide',
+    tagline: 'Follow the herd. Find the best.',
     // Home
     searchPlaceholder: 'Search products, brands...',
     allProducts: 'All {n} products',
