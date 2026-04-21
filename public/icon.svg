@@ -1,19 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="#ed5e58"/>
-  <!-- Baby bottle body -->
-  <rect x="196" y="80" width="120" height="240" rx="60" fill="white"/>
-  <!-- Bottle cap -->
-  <rect x="216" y="50" width="80" height="40" rx="16" fill="#fbd5d3"/>
-  <!-- Milk level -->
-  <rect x="196" y="220" width="120" height="100" rx="0" fill="#fde8e7"/>
-  <rect x="196" y="320" width="120" height="0" rx="60" fill="#fde8e7"/>
-  <!-- Nipple -->
-  <ellipse cx="256" cy="46" rx="28" ry="18" fill="#f4726d"/>
-  <!-- Measurement lines -->
-  <line x1="216" y1="180" x2="240" y2="180" stroke="#f4726d" stroke-width="6" stroke-linecap="round"/>
-  <line x1="216" y1="230" x2="248" y2="230" stroke="#f4726d" stroke-width="6" stroke-linecap="round"/>
-  <line x1="216" y1="280" x2="240" y2="280" stroke="#f4726d" stroke-width="6" stroke-linecap="round"/>
-  <!-- Magnifying glass -->
-  <circle cx="340" cy="340" r="80" fill="none" stroke="white" stroke-width="28"/>
-  <line x1="396" y1="396" x2="450" y2="450" stroke="white" stroke-width="28" stroke-linecap="round"/>
+  <!-- White background -->
+  <rect width="512" height="512" rx="112" fill="white"/>
+  <!-- Dashed outer ring — dark teal -->
+  <circle cx="256" cy="256" r="220" stroke="#2D6A6A" stroke-width="34" stroke-dasharray="56 40" stroke-linecap="round" opacity="0.85"/>
+  <!-- Dashed outer ring — light sage offset -->
+  <circle cx="256" cy="256" r="220" stroke="#84b5b7" stroke-width="34" stroke-dasharray="56 40" stroke-dashoffset="96" stroke-linecap="round" opacity="0.6"/>
+  <!-- Inner peach/terracotta circle -->
+  <circle cx="256" cy="256" r="160" fill="#C4836A"/>
+  <!-- Highlight spot -->
+  <circle cx="208" cy="208" r="46" fill="#DFA892" opacity="0.75"/>
 </svg>
