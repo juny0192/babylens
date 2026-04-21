@@ -30,7 +30,6 @@ export default function FilterPanel({ filters, onChange }) {
   }
 
   const activeCount =
-    filters.sources.length +
     filters.categories.length +
     filters.ages.length +
     filters.tiers.length +
@@ -77,17 +76,7 @@ export default function FilterPanel({ filters, onChange }) {
       {/* Expanded panel */}
       {open && (
         <div className="px-4 pb-4 space-y-4 border-t border-gray-50">
-          {/* Sources */}
-          <div>
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2 mt-3">{t('source')}</p>
-            <div className="flex flex-wrap gap-2">
-              {SOURCES.map((s) => (
-                <Chip key={s} label={s} active={filters.sources.includes(s)} onClick={() => toggle('sources', s)} />
-              ))}
-            </div>
-          </div>
-
-          {/* Categories */}
+            {/* Categories */}
           <div>
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">{t('category')}</p>
             <div className="flex flex-wrap gap-2">
