@@ -26,6 +26,17 @@ export default function Navbar() {
       {/* Top bar */}
       <header className="fixed top-0 inset-x-0 z-40 bg-white border-b border-gray-100 h-14 flex items-center justify-between px-4">
         <button onClick={() => navigate('/')} className="flex items-center gap-2">
+          {/* Herdlee logo mark */}
+          <svg width="30" height="30" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            {/* Dashed outer ring — dark teal dashes */}
+            <circle cx="16" cy="16" r="14" stroke="#2D6A6A" strokeWidth="2.2" strokeDasharray="3.6 2.6" strokeLinecap="round" opacity="0.85" />
+            {/* Dashed outer ring — light sage dashes offset */}
+            <circle cx="16" cy="16" r="14" stroke="#84b5b7" strokeWidth="2.2" strokeDasharray="3.6 2.6" strokeDashoffset="6.2" strokeLinecap="round" opacity="0.6" />
+            {/* Inner peach/terracotta circle */}
+            <circle cx="16" cy="16" r="10" fill="#C4836A" />
+            {/* Highlight spot */}
+            <circle cx="13" cy="13" r="2.8" fill="#DFA892" opacity="0.75" />
+          </svg>
           <span className="text-2xl text-brand-500 tracking-tight" style={{ fontFamily: "'Fredoka', sans-serif", fontWeight: 700 }}>
             Herd<span className="text-gray-700">lee</span>
           </span>
