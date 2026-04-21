@@ -82,18 +82,18 @@ const CATEGORY_SVG = {
   ),
 }
 
-// Border color per category (left accent + full border)
+// Unique pastel color per category — border, left accent bar, icon
 const CATEGORY_STYLE = {
-  Strollers:        { border: 'border-brand-400',  icon: 'text-brand-500',  left: 'bg-brand-400' },
-  'Car Seats':      { border: 'border-blush-200',  icon: 'text-rose-400',   left: 'bg-blush-200' },
-  Carriers:         { border: 'border-brand-400',  icon: 'text-brand-500',  left: 'bg-brand-400' },
-  Feeding:          { border: 'border-peach-200',  icon: 'text-orange-400', left: 'bg-peach-200' },
-  Monitors:         { border: 'border-brand-400',  icon: 'text-brand-500',  left: 'bg-brand-400' },
-  'Nursery & Sleep':{ border: 'border-blush-200',  icon: 'text-rose-400',   left: 'bg-blush-200' },
-  'Gear & Travel':  { border: 'border-peach-200',  icon: 'text-orange-400', left: 'bg-peach-200' },
-  'Toys & Play':    { border: 'border-brand-400',  icon: 'text-brand-500',  left: 'bg-brand-400' },
-  'Bath & Potty':   { border: 'border-peach-200',  icon: 'text-orange-400', left: 'bg-peach-200' },
-  'Health & Safety':{ border: 'border-blush-200',  icon: 'text-rose-400',   left: 'bg-blush-200' },
+  Strollers:        { border: 'border-teal-300',   icon: 'text-teal-400',   left: 'bg-teal-300' },
+  'Car Seats':      { border: 'border-rose-300',   icon: 'text-rose-400',   left: 'bg-rose-300' },
+  Carriers:         { border: 'border-sky-300',    icon: 'text-sky-400',    left: 'bg-sky-300' },
+  Feeding:          { border: 'border-amber-300',  icon: 'text-amber-400',  left: 'bg-amber-300' },
+  Monitors:         { border: 'border-violet-300', icon: 'text-violet-400', left: 'bg-violet-300' },
+  'Nursery & Sleep':{ border: 'border-pink-300',   icon: 'text-pink-400',   left: 'bg-pink-300' },
+  'Gear & Travel':  { border: 'border-orange-300', icon: 'text-orange-400', left: 'bg-orange-300' },
+  'Toys & Play':    { border: 'border-lime-400',   icon: 'text-lime-500',   left: 'bg-lime-400' },
+  'Bath & Potty':   { border: 'border-cyan-300',   icon: 'text-cyan-500',   left: 'bg-cyan-300' },
+  'Health & Safety':{ border: 'border-emerald-300',icon: 'text-emerald-500',left: 'bg-emerald-300' },
 }
 
 export default function Discover() {
