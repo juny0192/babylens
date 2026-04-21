@@ -138,6 +138,16 @@ export default function Admin() {
 
   useEffect(() => { if (unlocked && activeTab === 'usage') loadUsage() }, [unlocked, activeTab, loadUsage])
 
+  // --- Duplicate check ---
+  function isDuplicate(name, brand) {
+    const n = name.trim().toLowerCase()
+    const b = brand.trim().toLowerCase()
+    return products.some(p =>
+      p.name.trim().toLowerCase() === n &&
+      p.brand.trim().toLowerCase() === b
+    )
+  }
+
   // --- Auto-sum mentions ---
   function recalcMentions(sources) {
     const total = Object.values(sources).reduce((sum, v) => sum + (Number(v) || 0), 0)
@@ -478,10 +488,13 @@ export default function Admin() {
                 </div>
 
                 <div className="space-y-3">
-                  {bulkResults.map((p, i) => (
+                  {bulkResults.map((p, i) => {
+                    const alreadyExists = isDuplicate(p.name, p.brand)
+                    return (
                     <div key={i}
                       onClick={() => toggleBulkSelect(i)}
                       className={`${cardClass} cursor-pointer transition-all ${
+                        alreadyExists ? 'border-red-200 ring-1 ring-red-200' :
                         bulkSelected.has(i) ? 'ring-2 ring-brand-400 border-brand-200' : 'opacity-60'
                       }`}>
                       <div className="flex items-start gap-3">
@@ -503,6 +516,11 @@ export default function Admin() {
                             <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${tierColors[p.price_tier] || ''}`}>
                               {p.price_tier}
                             </span>
+                            {alreadyExists && (
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600 border border-red-200">
+                                ⚠ Already exists
+                              </span>
+                            )}
                           </div>
                           <p className="text-xs text-gray-400 mb-2">${p.price} · {p.mentions} mentions</p>
                           <p className="text-xs text-gray-600 leading-relaxed line-clamp-2">{p.verdict}</p>
@@ -516,7 +534,7 @@ export default function Admin() {
                         </div>
                       </div>
                     </div>
-                  ))}
+                  )})}
                 </div>
 
                 {bulkImportStatus && (
@@ -632,6 +650,14 @@ export default function Admin() {
                 onChange={e => setFormData(p => ({ ...p, brand: e.target.value }))} />
             </div>
           </div>
+          {!editingId && formData.name.trim() && formData.brand.trim() && isDuplicate(formData.name, formData.brand) && (
+            <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-3 py-2.5 mb-4">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0">
+                <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+              <p className="text-xs text-red-600 font-semibold">This product already exists in your database.</p>
+            </div>
+          )}
           <button
             onClick={handleAutoFill}
             disabled={aiLoading || !formData.name.trim() || !formData.brand.trim()}
