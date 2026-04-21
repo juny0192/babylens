@@ -376,7 +376,7 @@ export default function Admin() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
         <div className={`w-full max-w-xs text-center ${shake ? 'animate-bounce' : ''}`}>
           <div className="w-16 h-16 bg-brand-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ed5e58" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#9EC4C5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
               <path d="M7 11V7a5 5 0 0110 0v4" />
             </svg>

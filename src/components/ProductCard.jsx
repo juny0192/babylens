@@ -72,8 +72,8 @@ export default function ProductCard({ product, rank }) {
                 width="18"
                 height="18"
                 viewBox="0 0 24 24"
-                fill={saved ? '#ed5e58' : 'none'}
-                stroke={saved ? '#ed5e58' : '#9ca3af'}
+                fill={saved ? '#9EC4C5' : 'none'}
+                stroke={saved ? '#9EC4C5' : '#9ca3af'}
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"

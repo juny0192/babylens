@@ -12,7 +12,7 @@ export default defineConfig({
         name: 'Herdlee',
         short_name: 'Herdlee',
         description: 'Follow the herd. Find the best baby gear — ranked by what parents are actually saying.',
-        theme_color: '#ed5e58',
+        theme_color: '#9EC4C5',
         background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait',
