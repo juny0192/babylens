@@ -9,9 +9,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'icon.svg', 'apple-touch-icon-180x180.png'],
       manifest: {
-        name: 'Herdlee',
-        short_name: 'Herdlee',
-        description: 'Follow the herd. Find the best baby gear — ranked by what parents are actually saying.',
+        name: 'MumSaid',
+        short_name: 'MumSaid',
+        description: 'What parents are actually saying — community-ranked baby gear reviews in one place.',
         theme_color: '#9EC4C5',
         background_color: '#ffffff',
         display: 'standalone',

@@ -68,7 +68,7 @@ export default function ReportModal({ onClose }) {
           <div className="py-6 text-center">
             <span className="text-4xl block mb-3">✅</span>
             <p className="text-sm font-semibold text-gray-800">Report sent!</p>
-            <p className="text-xs text-gray-400 mt-1">Thank you for helping improve Herdlee.</p>
+            <p className="text-xs text-gray-400 mt-1">Thank you for helping improve MumSaid.</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">

@@ -26,7 +26,7 @@ export default function Navbar() {
       {/* Top bar */}
       <header className="fixed top-0 inset-x-0 z-40 bg-white border-b border-gray-100 h-14 flex items-center justify-between px-4">
         <button onClick={() => navigate('/')} className="flex items-center gap-2">
-          {/* Herdlee logo mark */}
+          {/* MumSaid logo mark */}
           <svg width="30" height="30" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
             {/* Dashed outer ring — dark teal dashes */}
             <circle cx="16" cy="16" r="14" stroke="#2D6A6A" strokeWidth="2.2" strokeDasharray="3.6 2.6" strokeLinecap="round" opacity="0.85" />
@@ -38,7 +38,7 @@ export default function Navbar() {
             <circle cx="13" cy="13" r="2.8" fill="#DFA892" opacity="0.75" />
           </svg>
           <span className="text-2xl tracking-tight" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>
-            <span style={{ color: '#84b5b7' }}>herd</span><span style={{ color: '#1B3D3D' }}>lee</span>
+            <span style={{ color: '#84b5b7' }}>Mum</span><span style={{ color: '#1B3D3D' }}>Said</span>
           </span>
           <span className="text-xs bg-brand-100 text-brand-600 px-2 py-0.5 rounded-full font-medium">{t('beta')}</span>
         </button>

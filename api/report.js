@@ -13,7 +13,7 @@ export default async function handler(req, res) {
   try {
     const html = `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
-        <h2 style="color: #9EC4C5; margin-bottom: 4px;">Herdlee — User Report</h2>
+        <h2 style="color: #9EC4C5; margin-bottom: 4px;">MumSaid — User Report</h2>
         <p style="color: #6b7280; font-size: 13px; margin-top: 0;">${new Date().toLocaleString()}</p>
         <hr style="border: none; border-top: 1px solid #f3f4f6; margin: 16px 0;" />
 
@@ -45,9 +45,9 @@ export default async function handler(req, res) {
         Authorization: `Bearer ${resendKey}`,
       },
       body: JSON.stringify({
-        from: 'Herdlee Reports <onboarding@resend.dev>',
+        from: 'MumSaid Reports <onboarding@resend.dev>',
         to: 'juny0192@gmail.com',
-        subject: `[Herdlee Report] ${category || 'General'} — ${description.slice(0, 60)}${description.length > 60 ? '...' : ''}`,
+        subject: `[MumSaid Report] ${category || 'General'} — ${description.slice(0, 60)}${description.length > 60 ? '...' : ''}`,
         html,
       }),
     })
