@@ -1,4 +1,4 @@
-const KEY = 'babylens-device-id'
+const KEY = 'mumsaid-device-id'
 
 export function getDeviceId() {
   let id = localStorage.getItem(KEY)

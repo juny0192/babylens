@@ -338,7 +338,7 @@ export function LanguageProvider({ children }) {
   useEffect(() => {
     document.documentElement.lang = 'en'
     // Clean up any previously-saved language preference
-    localStorage.removeItem('babylens_language')
+    localStorage.removeItem('mumsaid_language')
   }, [])
 
   function setLang() { /* no-op */ }

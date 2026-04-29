@@ -976,10 +976,10 @@ function sumInPeriod(rows, service, period, field = 'units') {
 
 function UsageView({ rows, loading, error, onRefresh }) {
   const [startingBalance, setStartingBalance] = useState(() => {
-    const v = localStorage.getItem('babylens_anthropic_starting_balance')
+    const v = localStorage.getItem('mumsaid_anthropic_starting_balance')
     return v ? Number(v) : 0
   })
-  const [balanceDate, setBalanceDate] = useState(() => localStorage.getItem('babylens_anthropic_balance_date') || '')
+  const [balanceDate, setBalanceDate] = useState(() => localStorage.getItem('mumsaid_anthropic_balance_date') || '')
   const [editingBalance, setEditingBalance] = useState(false)
   const [balanceDraft, setBalanceDraft] = useState(String(startingBalance || ''))
 
@@ -989,8 +989,8 @@ function UsageView({ rows, loading, error, onRefresh }) {
       setStartingBalance(n)
       const today = new Date().toISOString().slice(0, 10)
       setBalanceDate(today)
-      localStorage.setItem('babylens_anthropic_starting_balance', String(n))
-      localStorage.setItem('babylens_anthropic_balance_date', today)
+      localStorage.setItem('mumsaid_anthropic_starting_balance', String(n))
+      localStorage.setItem('mumsaid_anthropic_balance_date', today)
     }
     setEditingBalance(false)
   }

@@ -21,7 +21,7 @@ async function getAccessToken() {
     headers: {
       Authorization: `Basic ${credentials}`,
       'Content-Type': 'application/x-www-form-urlencoded',
-      'User-Agent': 'BabyLens/1.0 by babylens_app',
+      'User-Agent': 'MumSaid/1.0 by mumsaid_app',
     },
     body: 'grant_type=client_credentials',
   })
@@ -44,7 +44,7 @@ export default async function handler(req, res) {
     const token = await getAccessToken()
     const headers = {
       Authorization: `Bearer ${token}`,
-      'User-Agent': 'BabyLens/1.0 by babylens_app',
+      'User-Agent': 'MumSaid/1.0 by mumsaid_app',
       'Accept': 'application/json',
     }
 

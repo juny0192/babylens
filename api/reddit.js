@@ -17,7 +17,7 @@ export default async function handler(req, res) {
   try {
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; BabyLens/1.0; +https://babylens.vercel.app)',
+        'User-Agent': 'Mozilla/5.0 (compatible; MumSaid/1.0; +https://mumsaid.vercel.app)',
         'Accept': 'application/json',
         'Accept-Language': 'en-US,en;q=0.9',
       },
